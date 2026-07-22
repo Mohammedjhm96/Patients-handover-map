@@ -106,6 +106,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             cursor: pointer;
             transition: transform 0.2s;
+            display: inline-block;
         }
         .color-dot:hover { transform: scale(1.15); }
 
@@ -158,7 +159,6 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* 1. صندوق النحاسي الفاتح الخاص بالاسم والشعار */
         .bronze-badge-container {
             text-align: center;
             margin-bottom: 12px;
@@ -169,8 +169,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background-color: #e6c594; /* لون نحاسي فاتح */
-            color: #000000;             /* خط أسود */
+            background-color: #e6c594;
+            color: #000000;
             font-weight: 800;
             font-size: 18px;
             padding: 6px 24px;
@@ -180,11 +180,8 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
 
-        .bronze-badge i {
-            font-size: 20px;
-        }
+        .bronze-badge i { font-size: 20px; }
 
-        /* 2. صندوق الوصف الرفيع جداً (Compact Header Box) */
         .header-box-slim {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
@@ -205,7 +202,6 @@
             font-size: 15px;
             font-weight: 800;
             color: #facc15;
-            white-dash: nowrap;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -246,7 +242,6 @@
             font-size: 12px;
         }
 
-        /* كروت الأقسام */
         .dept-card {
             margin-bottom: 20px;
             border-radius: 10px;
@@ -343,7 +338,6 @@
             opacity: 0.6;
         }
 
-        /* قواعد الطباعة */
         @media print {
             .controls-card, .dept-tabs, .action-element { display: none !important; }
             body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -366,27 +360,25 @@
         </div>
 
         <div class="tool-group">
-            <span class="tool-title"><i class="fa-solid fa-pen-to-square"></i> تنسيق الخط المحدد:</span>
+            <span class="tool-title"><i class="fa-solid fa-pen-to-square"></i> تنسيق النص المحدد:</span>
             
-            <!-- زر عريض Bold -->
-            <button class="btn btn-fmt" onclick="toggleBold()" title="خط عريض Bold">
-                <i class="fa-solid fa-bold"></i> غامق (Bold)
+            <button class="btn btn-fmt" onmousedown="applyFormat(event, 'bold')" title="خط عريض Bold">
+                <i class="fa-solid fa-bold"></i> غامق
             </button>
 
-            <!-- زر مسح التنسيق -->
-            <button class="btn btn-fmt" style="background:#64748b;" onclick="removeFormatting()" title="إزالة التنسيق">
-                <i class="fa-solid fa-remove-format"></i> إزالة التنسيق
+            <button class="btn btn-fmt" style="background:#64748b;" onmousedown="applyFormat(event, 'removeFormat')" title="إزالة التنسيق">
+                <i class="fa-solid fa-remove-format"></i> مسح التنسيق
             </button>
 
-            <span class="tool-title" style="margin-right:10px;"><i class="fa-solid fa-palette"></i> الألوان:</span>
-            <div class="color-dot" style="background:#dc2626;" onclick="changeTextColor('#dc2626')" title="أحمر"></div>
-            <div class="color-dot" style="background:#16a34a;" onclick="changeTextColor('#16a34a')" title="أخضر"></div>
-            <div class="color-dot" style="background:#2563eb;" onclick="changeTextColor('#2563eb')" title="أزرق"></div>
-            <div class="color-dot" style="background:#0f2b48;" onclick="changeTextColor('#0f2b48')" title="أزرق غامق چويتي"></div>
-            <div class="color-dot" style="background:#7e22ce;" onclick="changeTextColor('#7e22ce')" title="بنفسجي"></div>
-            <div class="color-dot" style="background:#065f46;" onclick="changeTextColor('#065f46')" title="أخضر غامق"></div>
-            <div class="color-dot" style="background:#000000;" onclick="changeTextColor('#000000')" title="أسود"></div>
-            <input type="color" id="customColorPicker" onchange="changeTextColor(this.value)" style="width:24px; height:24px; border:none; cursor:pointer; background:none;">
+            <span class="tool-title" style="margin-right:8px;"><i class="fa-solid fa-palette"></i> الألوان:</span>
+            <div class="color-dot" style="background:#dc2626;" onmousedown="applyColor(event, '#dc2626')" title="أحمر"></div>
+            <div class="color-dot" style="background:#16a34a;" onmousedown="applyColor(event, '#16a34a')" title="أخضر"></div>
+            <div class="color-dot" style="background:#2563eb;" onmousedown="applyColor(event, '#2563eb')" title="أزرق"></div>
+            <div class="color-dot" style="background:#0f2b48;" onmousedown="applyColor(event, '#0f2b48')" title="أزرق غامق چويتي"></div>
+            <div class="color-dot" style="background:#7e22ce;" onmousedown="applyColor(event, '#7e22ce')" title="بنفسجي"></div>
+            <div class="color-dot" style="background:#065f46;" onmousedown="applyColor(event, '#065f46')" title="أخضر غامق"></div>
+            <div class="color-dot" style="background:#000000;" onmousedown="applyColor(event, '#000000')" title="أسود"></div>
+            <input type="color" id="customColorPicker" onchange="changeCustomColor(this.value)" style="width:24px; height:24px; border:none; cursor:pointer; background:none;">
         </div>
     </div>
 
@@ -412,7 +404,6 @@
     <!-- المحتوى القابل للتعديل والطباعة -->
     <div id="pdf-content">
 
-        <!-- 1. صندوق نحاسي فاتح مع شعار طبي واسم الخدمة -->
         <div class="bronze-badge-container">
             <div class="bronze-badge">
                 <i class="fa-solid fa-hospital-user"></i>
@@ -420,7 +411,6 @@
             </div>
         </div>
 
-        <!-- 2. صندوق الوصف الرفيع (Slim Box) -->
         <div class="header-box-slim">
             <div class="header-flex">
                 <div class="hospital-title-slim">
@@ -455,7 +445,7 @@
             </div>
         </div>
 
-        <!-- 1. ردهة الرجال (أخضر غامق) -->
+        <!-- 1. ردهة الرجال -->
         <div class="dept-card dept-men">
             <div class="dept-banner">
                 <div class="dept-title">
@@ -554,7 +544,7 @@
             </table>
         </div>
 
-        <!-- 4. العناية الجراحية (أزرق غامق چويتي) -->
+        <!-- 4. العناية الجراحية -->
         <div class="dept-card dept-surg-icu">
             <div class="dept-banner">
                 <div class="dept-title">
@@ -598,6 +588,52 @@
         document.getElementById('appLiveUrl').href = window.location.href;
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
+        /* --- حفظ آخر تحديد نصي (Selection) لتفادي فقدانه في الهواتف --- */
+        let savedRange = null;
+
+        function saveSelection() {
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0) {
+                savedRange = sel.getRangeAt(0);
+            }
+        }
+
+        function restoreSelection() {
+            if (savedRange) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedRange);
+            }
+        }
+
+        document.addEventListener('selectionchange', () => {
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0 && !sel.isCollapsed) {
+                savedRange = sel.getRangeAt(0);
+            }
+        });
+
+        /* --- تطبيق التلوين والتنسيق بأمان --- */
+        function applyColor(event, color) {
+            event.preventDefault(); // منع سحب التركيز
+            restoreSelection();
+            document.execCommand('foreColor', false, color);
+            saveData();
+        }
+
+        function changeCustomColor(color) {
+            restoreSelection();
+            document.execCommand('foreColor', false, color);
+            saveData();
+        }
+
+        function applyFormat(event, command) {
+            event.preventDefault(); // منع سحب التركيز
+            restoreSelection();
+            document.execCommand(command, false, null);
+            saveData();
+        }
+
         /* --- التنقل بين الأقسام عبر الأزرار (Tabs) --- */
         function showTab(targetClass, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -611,22 +647,6 @@
                     card.style.display = 'none';
                 }
             });
-        }
-
-        /* --- خيارات التنسيق والتلوين --- */
-        function toggleBold() {
-            document.execCommand('bold', false, null);
-            saveData();
-        }
-
-        function changeTextColor(color) {
-            document.execCommand('foreColor', false, color);
-            saveData();
-        }
-
-        function removeFormatting() {
-            document.execCommand('removeFormat', false, null);
-            saveData();
         }
 
         function addRow(tbodyId) {
