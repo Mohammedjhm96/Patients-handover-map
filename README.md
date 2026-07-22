@@ -30,20 +30,23 @@
             color: #1e293b;
         }
 
-        /* شريط التنسيق والتحكم العلوي */
+        /* شريط التنسيق والتحكم العلوي (ثابت مع التمرير Sticky) */
         .controls-card {
             max-width: 1150px;
             margin: 0 auto 15px auto;
             background: #ffffff;
             border-radius: 12px;
             padding: 10px 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
             flex-wrap: wrap;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
         }
 
         .tool-group {
@@ -272,7 +275,6 @@
         .dept-med-icu .dept-banner { background-color: var(--color-med-icu); }
         .dept-surg-icu .dept-banner { background-color: var(--color-surg-icu); }
 
-        /* شريط معلومات القسم الخاص لكل قسم */
         .dept-sub-header {
             background: #f1f5f9;
             padding: 6px 15px;
@@ -352,19 +354,29 @@
             font-size: 12px;
         }
 
-        .footer-banner {
-            margin-top: 20px;
-            padding-top: 12px;
-            border-top: 1px dashed #cbd5e1;
+        /* بوكس رابط الأسفل البارز */
+        .footer-banner-box {
+            margin-top: 25px;
+            padding: 12px 18px;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
             text-align: center;
-            font-size: 11px;
-            color: #64748b;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
-        .footer-banner a {
-            color: #2563eb;
+        .footer-banner-box .footer-title {
+            font-size: 12px;
             font-weight: 700;
-            text-decoration: none;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
+        .footer-banner-box a {
+            color: #2563eb;
+            font-weight: 800;
+            font-size: 13px;
+            text-decoration: underline;
             word-break: break-all;
         }
 
@@ -384,7 +396,7 @@
 </head>
 <body>
 
-    <!-- أدوات التنسيق والتحكم -->
+    <!-- أدوات التنسيق والتحكم (عائمة ومثبتة أعلى الصفحة) -->
     <div class="controls-card">
         <div class="tool-group">
             <button class="btn btn-pdf" onclick="generatePDF()">
@@ -447,7 +459,7 @@
             </div>
         </div>
 
-        <!-- 2. صندوق المستشفى مع اليوم والتاريخ العامين -->
+        <!-- صندوق المستشفى -->
         <div class="header-box-slim">
             <div class="header-flex">
                 <div class="hospital-title-slim">
@@ -677,8 +689,9 @@
             </table>
         </div>
 
-        <div class="footer-banner">
-            <div>لتعديل أو تحديث بيانات الخريطة عبر الموقع الإلكتروني:</div>
+        <!-- بوكس الرابط البارز أسفل الصفحة -->
+        <div class="footer-banner-box">
+            <div class="footer-title">لتعديل أو تحديث بيانات الخريطة عبر الموقع الإلكتروني:</div>
             <a href="#" target="_blank" id="appLiveUrl">جاري تحميل الرابط...</a>
         </div>
 
@@ -768,7 +781,6 @@
                 mainDay: document.getElementById('mainDaySelect').value,
                 mainDate: document.getElementById('mainDateInput').value,
                 
-                // الأطباء المستلمين لكل قسم
                 docMen: document.getElementById('doc-men').value,
                 dayMen: document.getElementById('day-men').value,
                 dateMen: document.getElementById('date-men').value,
