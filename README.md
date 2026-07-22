@@ -8,8 +8,6 @@
     <!-- FontAwesome Icons & Google Fonts Cairo -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <!-- html2pdf Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
@@ -105,7 +103,7 @@
         }
         .color-dot:hover { transform: scale(1.15); }
 
-        /* شريط الأقسام (Tabs) */
+        /* شريط الأقسام (Tabs) وتلوين الأزرار بحسب الخرائط */
         .dept-tabs {
             max-width: 1150px;
             margin: 0 auto 20px auto;
@@ -116,32 +114,39 @@
         }
 
         .tab-btn {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
+            border: none;
             border-radius: 10px;
             padding: 10px 18px;
             font-weight: 700;
             font-size: 14px;
-            color: #475569;
+            color: #ffffff;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            opacity: 0.75;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .tab-btn:hover {
-            border-color: #94a3b8;
-            background: #f1f5f9;
+            opacity: 0.95;
+            transform: translateY(-1px);
         }
 
         .tab-btn.active {
-            background: #0f172a;
-            color: #ffffff;
-            border-color: #0f172a;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            outline: 3px solid rgba(0, 0, 0, 0.15);
         }
+
+        /* ألوان الأزرار المخصصة */
+        .tab-all { background-color: #334155; }
+        .tab-men { background-color: var(--color-men); }
+        .tab-women { background-color: var(--color-women); }
+        .tab-med-icu { background-color: var(--color-med-icu); }
+        .tab-surg-icu { background-color: var(--color-surg-icu); }
 
         /* الورقة الرئيسية */
         #pdf-content {
@@ -313,11 +318,12 @@
             opacity: 0.6;
         }
 
+        /* الطباعة: تطبع فقط الأقسام الظاهرة حالياً على الشاشة */
         @media print {
             .controls-card, .dept-tabs, .action-element { display: none !important; }
-            .dept-card { display: block !important; }
-            body { padding: 0; background: white; }
-            #pdf-content { box-shadow: none; padding: 0; border: none; }
+            body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            #pdf-content { box-shadow: none; padding: 0; border: none; width: 100%; max-width: 100%; }
+            @page { size: A4 portrait; margin: 10mm; }
         }
     </style>
 </head>
@@ -327,7 +333,7 @@
     <div class="controls-card">
         <div class="tool-group">
             <button class="btn btn-pdf" onclick="generatePDF()">
-                <i class="fa-solid fa-file-pdf"></i> تصدير الخريطة (PDF)
+                <i class="fa-solid fa-print"></i> طباعة / حفظ المحدّد كـ (PDF)
             </button>
             <button class="btn btn-reset" onclick="clearData()">
                 <i class="fa-solid fa-rotate-right"></i> مسح وتصفير البيانات
@@ -346,21 +352,21 @@
         </div>
     </div>
 
-    <!-- أزرار اختيار الأقسام (Tabs) -->
+    <!-- أزرار اختيار الأقسام (Tabs) الملونة بنفس لون الخرائط -->
     <div class="dept-tabs action-element">
-        <button class="tab-btn active" onclick="showTab('all', this)">
+        <button class="tab-btn tab-all active" onclick="showTab('all', this)">
             <i class="fa-solid fa-border-all"></i> عرض جميع الأقسام
         </button>
-        <button class="tab-btn" onclick="showTab('dept-men', this)">
+        <button class="tab-btn tab-men" onclick="showTab('dept-men', this)">
             <i class="fa-solid fa-mars"></i> ردهة الرجال
         </button>
-        <button class="tab-btn" onclick="showTab('dept-women', this)">
+        <button class="tab-btn tab-women" onclick="showTab('dept-women', this)">
             <i class="fa-solid fa-venus"></i> ردهة النساء
         </button>
-        <button class="tab-btn" onclick="showTab('dept-med-icu', this)">
+        <button class="tab-btn tab-med-icu" onclick="showTab('dept-med-icu', this)">
             <i class="fa-solid fa-heart-pulse"></i> العناية الباطنية
         </button>
-        <button class="tab-btn" onclick="showTab('dept-surg-icu', this)">
+        <button class="tab-btn tab-surg-icu" onclick="showTab('dept-surg-icu', this)">
             <i class="fa-solid fa-user-nurse"></i> العناية الجراحية
         </button>
     </div>
@@ -548,11 +554,9 @@
 
         /* --- التنقل بين الأقسام عبر الأزرار (Tabs) --- */
         function showTab(targetClass, btn) {
-            // تحديث تصميم الأزرار
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // إظهار وإخفاء الكروت بناءً على الخيار المحدد
             const cards = document.querySelectorAll('.dept-card');
             cards.forEach(card => {
                 if (targetClass === 'all' || card.classList.contains(targetClass)) {
@@ -631,33 +635,11 @@
             }
         }
 
+        /* --- الطباعة المباشرة للقسم الظاهر حالياً فقط --- */
         function generatePDF() {
-            // إظهار كافة الأقسام قبل تصدير PDF لتظهر في الملف بالكامل
-            const cards = document.querySelectorAll('.dept-card');
-            cards.forEach(card => card.style.display = 'block');
-
-            const element = document.getElementById('pdf-content');
-            const actions = document.querySelectorAll('.action-element');
-            actions.forEach(el => el.style.display = 'none');
-
-            const opt = {
-                margin:       [8, 8, 8, 8],
-                filename:     `Patient_Handover_Map_${new Date().toISOString().slice(0,10)}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                actions.forEach(el => el.style.display = '');
-                // إعادة حالة التبويب النشط بعد الانتهاء من التصدير
-                const activeTab = document.querySelector('.tab-btn.active');
-                const activeOnClick = activeTab ? activeTab.getAttribute('onclick') : '';
-                if(activeTab) activeTab.click();
-            });
+            window.print();
         }
 
-        // تحميل البيانات المحفوظة فور فتح الصفحة
         window.onload = loadData;
     </script>
 </body>
