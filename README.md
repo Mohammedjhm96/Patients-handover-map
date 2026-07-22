@@ -80,6 +80,12 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
 
+        .btn-reset {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+
         .btn-add-patient {
             background: #2563eb;
             color: white;
@@ -272,6 +278,9 @@
             <button class="btn btn-pdf" onclick="generatePDF()">
                 <i class="fa-solid fa-file-pdf"></i> تصدير الخريطة (PDF)
             </button>
+            <button class="btn btn-reset" onclick="clearData()">
+                <i class="fa-solid fa-rotate-right"></i> مسح وتصفير البيانات
+            </button>
         </div>
 
         <div class="tool-group">
@@ -298,7 +307,7 @@
             <div class="header-grid">
                 <div class="info-field">
                     <i class="fa-solid fa-calendar-day"></i>
-                    <select id="daySelect">
+                    <select id="daySelect" onchange="saveData()">
                         <option>السبت</option>
                         <option>الأحد</option>
                         <option>الإثنين</option>
@@ -311,12 +320,12 @@
 
                 <div class="info-field">
                     <i class="fa-solid fa-calendar-check"></i>
-                    <input type="date" id="dateInput">
+                    <input type="date" id="dateInput" onchange="saveData()">
                 </div>
 
                 <div class="info-field">
                     <i class="fa-solid fa-user-doctor"></i>
-                    <input type="text" placeholder="تسليم العناية إلى: د. اسم الطبيب المستلم">
+                    <input type="text" id="doctorInput" placeholder="تسليم العناية إلى: د. اسم الطبيب المستلم" oninput="saveData()">
                 </div>
             </div>
         </div>
@@ -328,12 +337,12 @@
                     <i class="fa-solid fa-mars"></i>
                     <span>ردهة الرجال (Male Ward)</span>
                 </div>
-                <button class="btn btn-add-patient action-element" onclick="addRow('men-tbody')">+ إضافة مريض</button>
+                <button class="btn btn-add-patient action-element" onclick="addRow('men-tbody')">+ إضافة حالة</button>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">السرير</th>
+                        <th style="width: 12%;">الحالة</th>
                         <th style="width: 25%;">اسم المريض والعمر</th>
                         <th style="width: 25%;">التشخيص الطبي</th>
                         <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
@@ -342,10 +351,10 @@
                 </thead>
                 <tbody id="men-tbody">
                     <tr>
-                        <td><span class="bed-badge cell-editable" contenteditable="true">Bed 1</span></td>
-                        <td><div class="cell-editable" contenteditable="true">اسم المريض...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">التشخيص...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">الملاحظات والخطة العلاجية...</div></td>
+                        <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريض...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                     </tr>
                 </tbody>
@@ -359,12 +368,12 @@
                     <i class="fa-solid fa-venus"></i>
                     <span>ردهة النساء (Female Ward)</span>
                 </div>
-                <button class="btn btn-add-patient action-element" onclick="addRow('women-tbody')">+ إضافة مريضة</button>
+                <button class="btn btn-add-patient action-element" onclick="addRow('women-tbody')">+ إضافة حالة</button>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">السرير</th>
+                        <th style="width: 12%;">الحالة</th>
                         <th style="width: 25%;">اسم المريضة والعمر</th>
                         <th style="width: 25%;">التشخيص الطبي</th>
                         <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
@@ -373,10 +382,10 @@
                 </thead>
                 <tbody id="women-tbody">
                     <tr>
-                        <td><span class="bed-badge cell-editable" contenteditable="true">Bed 1</span></td>
-                        <td><div class="cell-editable" contenteditable="true">اسم المريضة...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">التشخيص...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">الملاحظات والخطة العلاجية...</div></td>
+                        <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريضة...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                     </tr>
                 </tbody>
@@ -395,7 +404,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">السرير</th>
+                        <th style="width: 12%;">الحالة</th>
                         <th style="width: 25%;">اسم المريض والعمر</th>
                         <th style="width: 25%;">التشخيص الطبي</th>
                         <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
@@ -404,10 +413,10 @@
                 </thead>
                 <tbody id="med-icu-tbody">
                     <tr>
-                        <td><span class="bed-badge cell-editable" contenteditable="true">Bed 1</span></td>
-                        <td><div class="cell-editable" contenteditable="true">اسم المريض...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">التشخيص...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">الملاحظات والخطة العلاجية...</div></td>
+                        <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريض...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                     </tr>
                 </tbody>
@@ -426,7 +435,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">السرير</th>
+                        <th style="width: 12%;">الحالة</th>
                         <th style="width: 25%;">اسم المريض والعمر</th>
                         <th style="width: 25%;">التشخيص الطبي</th>
                         <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
@@ -435,10 +444,10 @@
                 </thead>
                 <tbody id="surg-icu-tbody">
                     <tr>
-                        <td><span class="bed-badge cell-editable" contenteditable="true">Bed 1</span></td>
-                        <td><div class="cell-editable" contenteditable="true">اسم المريض...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">التشخيص...</div></td>
-                        <td><div class="cell-editable" contenteditable="true">الملاحظات والخطة العلاجية...</div></td>
+                        <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريض...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                     </tr>
                 </tbody>
@@ -453,29 +462,74 @@
     </div>
 
     <script>
-        document.getElementById('dateInput').valueAsDate = new Date();
         document.getElementById('appLiveUrl').href = window.location.href;
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
         function changeTextColor(color) {
             document.execCommand('foreColor', false, color);
+            saveData();
         }
 
         function addRow(tbodyId) {
             const tbody = document.getElementById(tbodyId);
+            const count = tbody.children.length + 1;
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><span class="bed-badge cell-editable" contenteditable="true">Bed</span></td>
-                <td><div class="cell-editable" contenteditable="true"></div></td>
-                <td><div class="cell-editable" contenteditable="true"></div></td>
-                <td><div class="cell-editable" contenteditable="true"></div></td>
+                <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case ${count}</span></td>
+                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
+                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
+                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
                 <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
             `;
             tbody.appendChild(tr);
+            saveData();
         }
 
         function deleteRow(btn) {
             btn.closest('tr').remove();
+            saveData();
+        }
+
+        /* --- حفظ واسترجاع البيانات عبر LocalStorage --- */
+        function saveData() {
+            const data = {
+                day: document.getElementById('daySelect').value,
+                date: document.getElementById('dateInput').value,
+                doctor: document.getElementById('doctorInput').value,
+                tables: {
+                    men: document.getElementById('men-tbody').innerHTML,
+                    women: document.getElementById('women-tbody').innerHTML,
+                    medIcu: document.getElementById('med-icu-tbody').innerHTML,
+                    surgIcu: document.getElementById('surg-icu-tbody').innerHTML
+                }
+            };
+            localStorage.setItem('handoverDataMap', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('handoverDataMap');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if(data.day) document.getElementById('daySelect').value = data.day;
+                if(data.date) document.getElementById('dateInput').value = data.date;
+                if(data.doctor) document.getElementById('doctorInput').value = data.doctor;
+                
+                if(data.tables) {
+                    if(data.tables.men) document.getElementById('men-tbody').innerHTML = data.tables.men;
+                    if(data.tables.women) document.getElementById('women-tbody').innerHTML = data.tables.women;
+                    if(data.tables.medIcu) document.getElementById('med-icu-tbody').innerHTML = data.tables.medIcu;
+                    if(data.tables.surgIcu) document.getElementById('surg-icu-tbody').innerHTML = data.tables.surgIcu;
+                }
+            } else {
+                document.getElementById('dateInput').valueAsDate = new Date();
+            }
+        }
+
+        function clearData() {
+            if (confirm('هل أنت تأكد من مسح جميع البيانات المدخلة والبدء من جديد؟')) {
+                localStorage.removeItem('handoverDataMap');
+                location.reload();
+            }
         }
 
         function generatePDF() {
@@ -495,6 +549,9 @@
                 actions.forEach(el => el.style.display = '');
             });
         }
+
+        // تحميل البيانات المحفوظة فور فتح الصفحة
+        window.onload = loadData;
     </script>
 </body>
 </html>
