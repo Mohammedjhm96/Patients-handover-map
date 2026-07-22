@@ -105,6 +105,44 @@
         }
         .color-dot:hover { transform: scale(1.15); }
 
+        /* شريط الأقسام (Tabs) */
+        .dept-tabs {
+            max-width: 1150px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .tab-btn:hover {
+            border-color: #94a3b8;
+            background: #f1f5f9;
+        }
+
+        .tab-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+        }
+
         /* الورقة الرئيسية */
         #pdf-content {
             max-width: 1150px;
@@ -122,6 +160,18 @@
             border-radius: 14px;
             padding: 20px 25px;
             margin-bottom: 25px;
+        }
+
+        .hospital-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #facc15;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .header-title {
@@ -264,7 +314,8 @@
         }
 
         @media print {
-            .controls-card, .action-element { display: none !important; }
+            .controls-card, .dept-tabs, .action-element { display: none !important; }
+            .dept-card { display: block !important; }
             body { padding: 0; background: white; }
             #pdf-content { box-shadow: none; padding: 0; border: none; }
         }
@@ -295,10 +346,32 @@
         </div>
     </div>
 
+    <!-- أزرار اختيار الأقسام (Tabs) -->
+    <div class="dept-tabs action-element">
+        <button class="tab-btn active" onclick="showTab('all', this)">
+            <i class="fa-solid fa-border-all"></i> عرض جميع الأقسام
+        </button>
+        <button class="tab-btn" onclick="showTab('dept-men', this)">
+            <i class="fa-solid fa-mars"></i> ردهة الرجال
+        </button>
+        <button class="tab-btn" onclick="showTab('dept-women', this)">
+            <i class="fa-solid fa-venus"></i> ردهة النساء
+        </button>
+        <button class="tab-btn" onclick="showTab('dept-med-icu', this)">
+            <i class="fa-solid fa-heart-pulse"></i> العناية الباطنية
+        </button>
+        <button class="tab-btn" onclick="showTab('dept-surg-icu', this)">
+            <i class="fa-solid fa-user-nurse"></i> العناية الجراحية
+        </button>
+    </div>
+
     <!-- المحتوى القابل للتعديل والطباعة -->
     <div id="pdf-content">
 
         <div class="header-box">
+            <div class="hospital-title">
+                <span>مستشفى طوارىء ام الربيعين 🌼</span>
+            </div>
             <div class="header-title">
                 <i class="fa-solid fa-notes-medical"></i>
                 <span>خريطة تسليم وتسلّم المرضى (Patient Handover Map)</span>
@@ -473,6 +546,23 @@
         document.getElementById('appLiveUrl').href = window.location.href;
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
+        /* --- التنقل بين الأقسام عبر الأزرار (Tabs) --- */
+        function showTab(targetClass, btn) {
+            // تحديث تصميم الأزرار
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // إظهار وإخفاء الكروت بناءً على الخيار المحدد
+            const cards = document.querySelectorAll('.dept-card');
+            cards.forEach(card => {
+                if (targetClass === 'all' || card.classList.contains(targetClass)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
         function changeTextColor(color) {
             document.execCommand('foreColor', false, color);
             saveData();
@@ -542,6 +632,10 @@
         }
 
         function generatePDF() {
+            // إظهار كافة الأقسام قبل تصدير PDF لتظهر في الملف بالكامل
+            const cards = document.querySelectorAll('.dept-card');
+            cards.forEach(card => card.style.display = 'block');
+
             const element = document.getElementById('pdf-content');
             const actions = document.querySelectorAll('.action-element');
             actions.forEach(el => el.style.display = 'none');
@@ -556,6 +650,10 @@
 
             html2pdf().set(opt).from(element).save().then(() => {
                 actions.forEach(el => el.style.display = '');
+                // إعادة حالة التبويب النشط بعد الانتهاء من التصدير
+                const activeTab = document.querySelector('.tab-btn.active');
+                const activeOnClick = activeTab ? activeTab.getAttribute('onclick') : '';
+                if(activeTab) activeTab.click();
             });
         }
 
