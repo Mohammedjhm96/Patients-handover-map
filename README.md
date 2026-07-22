@@ -91,11 +91,12 @@
         }
 
         .btn-add-patient {
-            background: #2563eb;
-            color: white;
+            background: #ffffff;
+            color: #0f172a;
             padding: 5px 10px;
             font-size: 12px;
             border-radius: 6px;
+            font-weight: 800;
         }
 
         .color-dot {
@@ -199,7 +200,7 @@
         }
 
         .hospital-title-slim {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 800;
             color: #facc15;
             display: flex;
@@ -211,7 +212,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            flex: 1;
             justify-content: flex-end;
             flex-wrap: wrap;
         }
@@ -242,8 +242,9 @@
             font-size: 12px;
         }
 
+        /* كروت الأقسام */
         .dept-card {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid #e2e8f0;
@@ -270,6 +271,41 @@
         .dept-women .dept-banner { background-color: var(--color-women); }
         .dept-med-icu .dept-banner { background-color: var(--color-med-icu); }
         .dept-surg-icu .dept-banner { background-color: var(--color-surg-icu); }
+
+        /* شريط معلومات القسم الخاص لكل قسم */
+        .dept-sub-header {
+            background: #f1f5f9;
+            padding: 6px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 12px;
+        }
+
+        .dept-sub-field {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .dept-sub-field i {
+            color: #64748b;
+        }
+
+        .dept-sub-field input, .dept-sub-field select {
+            border: 1px solid #cbd5e1;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+            outline: none;
+            background: #ffffff;
+        }
 
         table {
             width: 100%;
@@ -411,6 +447,7 @@
             </div>
         </div>
 
+        <!-- 2. صندوق المستشفى مع اليوم والتاريخ العامين -->
         <div class="header-box-slim">
             <div class="header-flex">
                 <div class="hospital-title-slim">
@@ -421,7 +458,7 @@
                 <div class="header-grid-slim">
                     <div class="info-field-slim">
                         <i class="fa-solid fa-calendar-day"></i>
-                        <select id="daySelect" onchange="saveData()">
+                        <select id="mainDaySelect" onchange="saveData()">
                             <option>السبت</option>
                             <option>الأحد</option>
                             <option>الإثنين</option>
@@ -434,12 +471,7 @@
 
                     <div class="info-field-slim">
                         <i class="fa-solid fa-calendar-check"></i>
-                        <input type="date" id="dateInput" onchange="saveData()">
-                    </div>
-
-                    <div class="info-field-slim" style="flex:1; min-width: 180px;">
-                        <i class="fa-solid fa-user-doctor"></i>
-                        <input type="text" id="doctorInput" placeholder="تسليم إلى: د. اسم الطبيب المستلم" oninput="saveData()" style="width:100%;">
+                        <input type="date" id="mainDateInput" onchange="saveData()">
                     </div>
                 </div>
             </div>
@@ -453,6 +485,23 @@
                     <span>ردهة الرجال (Male Ward)</span>
                 </div>
                 <button class="btn btn-add-patient action-element" onclick="addRow('men-tbody')">+ إضافة حالة</button>
+            </div>
+            <div class="dept-sub-header">
+                <div class="dept-sub-field" style="flex:1;">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>تسليم إلى:</span>
+                    <input type="text" id="doc-men" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:260px;">
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <select id="day-men" onchange="saveData()">
+                        <option>السبت</option><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
+                    </select>
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <input type="date" id="date-men" onchange="saveData()">
+                </div>
             </div>
             <table>
                 <thead>
@@ -487,6 +536,23 @@
                 </div>
                 <button class="btn btn-add-patient action-element" onclick="addRow('women-tbody')">+ إضافة حالة</button>
             </div>
+            <div class="dept-sub-header">
+                <div class="dept-sub-field" style="flex:1;">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>تسليم إلى:</span>
+                    <input type="text" id="doc-women" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:260px;">
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <select id="day-women" onchange="saveData()">
+                        <option>السبت</option><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
+                    </select>
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <input type="date" id="date-women" onchange="saveData()">
+                </div>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -520,6 +586,23 @@
                 </div>
                 <button class="btn btn-add-patient action-element" onclick="addRow('med-icu-tbody')">+ إضافة حالة</button>
             </div>
+            <div class="dept-sub-header">
+                <div class="dept-sub-field" style="flex:1;">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>تسليم إلى:</span>
+                    <input type="text" id="doc-med-icu" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:260px;">
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <select id="day-med-icu" onchange="saveData()">
+                        <option>السبت</option><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
+                    </select>
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <input type="date" id="date-med-icu" onchange="saveData()">
+                </div>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -552,6 +635,23 @@
                     <span>العناية الجراحية (Surgical ICU)</span>
                 </div>
                 <button class="btn btn-add-patient action-element" onclick="addRow('surg-icu-tbody')">+ إضافة حالة</button>
+            </div>
+            <div class="dept-sub-header">
+                <div class="dept-sub-field" style="flex:1;">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>تسليم إلى:</span>
+                    <input type="text" id="doc-surg-icu" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:260px;">
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <select id="day-surg-icu" onchange="saveData()">
+                        <option>السبت</option><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
+                    </select>
+                </div>
+                <div class="dept-sub-field">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <input type="date" id="date-surg-icu" onchange="saveData()">
+                </div>
             </div>
             <table>
                 <thead>
@@ -588,15 +688,8 @@
         document.getElementById('appLiveUrl').href = window.location.href;
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
-        /* --- حفظ آخر تحديد نصي (Selection) لتفادي فقدانه في الهواتف --- */
+        /* --- حفظ آخر تحديد نصي (Selection) --- */
         let savedRange = null;
-
-        function saveSelection() {
-            const sel = window.getSelection();
-            if (sel.rangeCount > 0) {
-                savedRange = sel.getRangeAt(0);
-            }
-        }
 
         function restoreSelection() {
             if (savedRange) {
@@ -613,9 +706,8 @@
             }
         });
 
-        /* --- تطبيق التلوين والتنسيق بأمان --- */
         function applyColor(event, color) {
-            event.preventDefault(); // منع سحب التركيز
+            event.preventDefault();
             restoreSelection();
             document.execCommand('foreColor', false, color);
             saveData();
@@ -628,7 +720,7 @@
         }
 
         function applyFormat(event, command) {
-            event.preventDefault(); // منع سحب التركيز
+            event.preventDefault();
             restoreSelection();
             document.execCommand(command, false, null);
             saveData();
@@ -673,9 +765,26 @@
         /* --- حفظ واسترجاع البيانات عبر LocalStorage --- */
         function saveData() {
             const data = {
-                day: document.getElementById('daySelect').value,
-                date: document.getElementById('dateInput').value,
-                doctor: document.getElementById('doctorInput').value,
+                mainDay: document.getElementById('mainDaySelect').value,
+                mainDate: document.getElementById('mainDateInput').value,
+                
+                // الأطباء المستلمين لكل قسم
+                docMen: document.getElementById('doc-men').value,
+                dayMen: document.getElementById('day-men').value,
+                dateMen: document.getElementById('date-men').value,
+
+                docWomen: document.getElementById('doc-women').value,
+                dayWomen: document.getElementById('day-women').value,
+                dateWomen: document.getElementById('date-women').value,
+
+                docMedIcu: document.getElementById('doc-med-icu').value,
+                dayMedIcu: document.getElementById('day-med-icu').value,
+                dateMedIcu: document.getElementById('date-med-icu').value,
+
+                docSurgIcu: document.getElementById('doc-surg-icu').value,
+                daySurgIcu: document.getElementById('day-surg-icu').value,
+                dateSurgIcu: document.getElementById('date-surg-icu').value,
+
                 tables: {
                     men: document.getElementById('men-tbody').innerHTML,
                     women: document.getElementById('women-tbody').innerHTML,
@@ -688,12 +797,29 @@
 
         function loadData() {
             const saved = localStorage.getItem('handoverDataMap');
+            const todayStr = new Date().toISOString().split('T')[0];
+
             if (saved) {
                 const data = JSON.parse(saved);
-                if(data.day) document.getElementById('daySelect').value = data.day;
-                if(data.date) document.getElementById('dateInput').value = data.date;
-                if(data.doctor) document.getElementById('doctorInput').value = data.doctor;
-                
+                if(data.mainDay) document.getElementById('mainDaySelect').value = data.mainDay;
+                if(data.mainDate) document.getElementById('mainDateInput').value = data.mainDate;
+
+                if(data.docMen) document.getElementById('doc-men').value = data.docMen;
+                if(data.dayMen) document.getElementById('day-men').value = data.dayMen;
+                if(data.dateMen) document.getElementById('date-men').value = data.dateMen;
+
+                if(data.docWomen) document.getElementById('doc-women').value = data.docWomen;
+                if(data.dayWomen) document.getElementById('day-women').value = data.dayWomen;
+                if(data.dateWomen) document.getElementById('date-women').value = data.dateWomen;
+
+                if(data.docMedIcu) document.getElementById('doc-med-icu').value = data.docMedIcu;
+                if(data.dayMedIcu) document.getElementById('day-med-icu').value = data.dayMedIcu;
+                if(data.dateMedIcu) document.getElementById('date-med-icu').value = data.dateMedIcu;
+
+                if(data.docSurgIcu) document.getElementById('doc-surg-icu').value = data.docSurgIcu;
+                if(data.daySurgIcu) document.getElementById('day-surg-icu').value = data.daySurgIcu;
+                if(data.dateSurgIcu) document.getElementById('date-surg-icu').value = data.dateSurgIcu;
+
                 if(data.tables) {
                     if(data.tables.men) document.getElementById('men-tbody').innerHTML = data.tables.men;
                     if(data.tables.women) document.getElementById('women-tbody').innerHTML = data.tables.women;
@@ -701,7 +827,11 @@
                     if(data.tables.surgIcu) document.getElementById('surg-icu-tbody').innerHTML = data.tables.surgIcu;
                 }
             } else {
-                document.getElementById('dateInput').valueAsDate = new Date();
+                document.getElementById('mainDateInput').value = todayStr;
+                document.getElementById('date-men').value = todayStr;
+                document.getElementById('date-women').value = todayStr;
+                document.getElementById('date-med-icu').value = todayStr;
+                document.getElementById('date-surg-icu').value = todayStr;
             }
         }
 
