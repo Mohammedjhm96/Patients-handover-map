@@ -34,7 +34,7 @@
 
         /* شريط تحكم حديث */
         .controls-card {
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 0 auto 20px auto;
             background: #ffffff;
             border-radius: 16px;
@@ -107,7 +107,7 @@
 
         /* الورقة الرئيسية */
         #pdf-content {
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 0 auto;
             background: #ffffff;
             padding: 25px 30px;
@@ -342,10 +342,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">الحالة</th>
-                        <th style="width: 25%;">اسم المريض والعمر</th>
-                        <th style="width: 25%;">التشخيص الطبي</th>
-                        <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
+                        <th style="width: 10%;">الحالة</th>
+                        <th style="width: 20%;">اسم المريض والعمر</th>
+                        <th style="width: 18%;">الطبيب الاختصاص</th>
+                        <th style="width: 22%;">التشخيص الطبي</th>
+                        <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
                         <th class="action-element" style="width: 5%;"></th>
                     </tr>
                 </thead>
@@ -353,6 +354,7 @@
                     <tr>
                         <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريض...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">د. اسم الاختصاصي</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
@@ -373,10 +375,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">الحالة</th>
-                        <th style="width: 25%;">اسم المريضة والعمر</th>
-                        <th style="width: 25%;">التشخيص الطبي</th>
-                        <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
+                        <th style="width: 10%;">الحالة</th>
+                        <th style="width: 20%;">اسم المريضة والعمر</th>
+                        <th style="width: 18%;">الطبيب الاختصاص</th>
+                        <th style="width: 22%;">التشخيص الطبي</th>
+                        <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
                         <th class="action-element" style="width: 5%;"></th>
                     </tr>
                 </thead>
@@ -384,6 +387,7 @@
                     <tr>
                         <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريضة...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">د. اسم الاختصاصي</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
@@ -404,10 +408,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">الحالة</th>
-                        <th style="width: 25%;">اسم المريض والعمر</th>
-                        <th style="width: 25%;">التشخيص الطبي</th>
-                        <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
+                        <th style="width: 10%;">الحالة</th>
+                        <th style="width: 20%;">اسم المريض والعمر</th>
+                        <th style="width: 18%;">الطبيب الاختصاص</th>
+                        <th style="width: 22%;">التشخيص الطبي</th>
+                        <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
                         <th class="action-element" style="width: 5%;"></th>
                     </tr>
                 </thead>
@@ -415,6 +420,7 @@
                     <tr>
                         <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريض...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">د. اسم الاختصاصي</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
@@ -435,10 +441,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 12%;">الحالة</th>
-                        <th style="width: 25%;">اسم المريض والعمر</th>
-                        <th style="width: 25%;">التشخيص الطبي</th>
-                        <th style="width: 33%;">الخطة العلاجية والتفاصيل</th>
+                        <th style="width: 10%;">الحالة</th>
+                        <th style="width: 20%;">اسم المريض والعمر</th>
+                        <th style="width: 18%;">الطبيب الاختصاص</th>
+                        <th style="width: 22%;">التشخيص الطبي</th>
+                        <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
                         <th class="action-element" style="width: 5%;"></th>
                     </tr>
                 </thead>
@@ -446,6 +453,7 @@
                     <tr>
                         <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">اسم المريض...</div></td>
+                        <td><div class="cell-editable" contenteditable="true" oninput="saveData()">د. اسم الاختصاصي</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">التشخيص...</div></td>
                         <td><div class="cell-editable" contenteditable="true" oninput="saveData()">الملاحظات والخطة العلاجية...</div></td>
                         <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
@@ -476,6 +484,7 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case ${count}</span></td>
+                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
                 <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
                 <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
                 <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
