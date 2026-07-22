@@ -7,7 +7,7 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- استدعاء الخطوط العربية بما فيها خط بيروتي Beiruti -->
+    <!-- استدعاء الخطوط العربية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Beiruti:wght@400;600;700;800&family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
             --color-women: #7e22ce;       /* بنفسجي */
             --color-med-icu: #dc2626;     /* أحمر */
             --color-surg-icu: #2563eb;    /* أزرق */
-            --color-custom: #0891b2;      /* لون افتراضي للأقسام الجديدة */
             --bg-body: #f8fafc;
             --main-font: 'Cairo', sans-serif;
         }
@@ -159,6 +158,7 @@
             gap: 6px;
             transition: all 0.2s ease;
             opacity: 0.75;
+            background-color: #334155;
         }
 
         .tab-btn:hover { opacity: 0.95; }
@@ -168,12 +168,10 @@
             outline: 2px solid rgba(0,0,0,0.2);
         }
 
-        .tab-all { background-color: #334155; }
         .tab-men { background-color: var(--color-men); }
         .tab-women { background-color: var(--color-women); }
         .tab-med-icu { background-color: var(--color-med-icu); }
         .tab-surg-icu { background-color: var(--color-surg-icu); }
-        .tab-dynamic { background-color: var(--color-custom); }
 
         /* الورقة الرئيسية */
         #pdf-content {
@@ -206,8 +204,6 @@
             letter-spacing: 0.5px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
-
-        .bronze-badge i { font-size: 20px; }
 
         .header-box-slim {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -287,6 +283,11 @@
             justify-content: space-between;
         }
 
+        .dept-men .dept-banner { background-color: var(--color-men); }
+        .dept-women .dept-banner { background-color: var(--color-women); }
+        .dept-med-icu .dept-banner { background-color: var(--color-med-icu); }
+        .dept-surg-icu .dept-banner { background-color: var(--color-surg-icu); }
+
         .dept-title {
             display: flex;
             align-items: center;
@@ -311,11 +312,40 @@
             background: rgba(0, 0, 0, 0.15);
         }
 
-        .dept-men .dept-banner { background-color: var(--color-men); }
-        .dept-women .dept-banner { background-color: var(--color-women); }
-        .dept-med-icu .dept-banner { background-color: var(--color-med-icu); }
-        .dept-surg-icu .dept-banner { background-color: var(--color-surg-icu); }
-        .dept-dynamic .dept-banner { background-color: var(--color-custom); }
+        .dept-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .change-color-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }
+
+        .change-color-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .change-color-btn input[type="color"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
 
         .dept-sub-header {
             background: #f1f5f9;
@@ -334,10 +364,6 @@
             gap: 5px;
             color: #334155;
             font-weight: 700;
-        }
-
-        .dept-sub-field i {
-            color: #64748b;
         }
 
         .dept-sub-field input, .dept-sub-field select {
@@ -396,7 +422,6 @@
             font-size: 12px;
         }
 
-        /* بوكس رابط الأسفل البارز */
         .footer-banner-box {
             margin-top: 25px;
             padding: 12px 18px;
@@ -438,18 +463,16 @@
         }
 
         .delete-dept-btn {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.8);
             color: #ffffff;
             border: none;
-            border-radius: 4px;
-            padding: 3px 8px;
+            border-radius: 6px;
+            padding: 4px 8px;
             cursor: pointer;
             font-size: 11px;
-            margin-left: 10px;
+            font-weight: 700;
         }
-        .delete-dept-btn:hover {
-            background: #ef4444;
-        }
+        .delete-dept-btn:hover { background: #dc2626; }
 
         @media print {
             .controls-card, .dept-tabs, .action-element { display: none !important; }
@@ -475,7 +498,6 @@
         </div>
 
         <div class="tool-group">
-            <!-- اختيار نمط الخط (Font Selection) -->
             <span class="tool-title"><i class="fa-solid fa-font"></i> الخط:</span>
             <select class="font-select-control" onchange="changeFontFamily(this.value)">
                 <option value="'Cairo', sans-serif">Cairo (الافتراضي)</option>
@@ -486,24 +508,21 @@
             </select>
 
             <span class="tool-title" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> التنسيق:</span>
-            
             <button class="btn btn-fmt" onmousedown="applyFormat(event, 'bold')" title="خط عريض Bold">
                 <i class="fa-solid fa-bold"></i> غامق
             </button>
-
             <button class="btn btn-fmt" style="background:#64748b;" onmousedown="applyFormat(event, 'removeFormat')" title="إزالة التنسيق">
                 <i class="fa-solid fa-remove-format"></i> مسح
             </button>
 
             <span class="tool-title" style="margin-right:6px;"><i class="fa-solid fa-palette"></i> الألوان:</span>
-            <div class="color-dot" style="background:#dc2626;" onmousedown="applyColor(event, '#dc2626')" title="أحمر"></div>
-            <div class="color-dot" style="background:#16a34a;" onmousedown="applyColor(event, '#16a34a')" title="أخضر"></div>
-            <div class="color-dot" style="background:#2563eb;" onmousedown="applyColor(event, '#2563eb')" title="أزرق"></div>
-            <div class="color-dot" style="background:#0f2b48;" onmousedown="applyColor(event, '#0f2b48')" title="أزرق غامق چويتي"></div>
-            <div class="color-dot" style="background:#7e22ce;" onmousedown="applyColor(event, '#7e22ce')" title="بنفسجي"></div>
-            <div class="color-dot" style="background:#065f46;" onmousedown="applyColor(event, '#065f46')" title="أخضر غامق"></div>
-            <div class="color-dot" style="background:#000000;" onmousedown="applyColor(event, '#000000')" title="أسود"></div>
-            <input type="color" id="customColorPicker" onchange="changeCustomColor(this.value)" style="width:24px; height:24px; border:none; cursor:pointer; background:none;">
+            <div class="color-dot" style="background:#dc2626;" onmousedown="applyColor(event, '#dc2626')"></div>
+            <div class="color-dot" style="background:#16a34a;" onmousedown="applyColor(event, '#16a34a')"></div>
+            <div class="color-dot" style="background:#2563eb;" onmousedown="applyColor(event, '#2563eb')"></div>
+            <div class="color-dot" style="background:#0f2b48;" onmousedown="applyColor(event, '#0f2b48')"></div>
+            <div class="color-dot" style="background:#7e22ce;" onmousedown="applyColor(event, '#7e22ce')"></div>
+            <div class="color-dot" style="background:#065f46;" onmousedown="applyColor(event, '#065f46')"></div>
+            <div class="color-dot" style="background:#000000;" onmousedown="applyColor(event, '#000000')"></div>
         </div>
     </div>
 
@@ -512,17 +531,17 @@
         <button class="tab-btn tab-all active" onclick="showTab('all', this)">
             <i class="fa-solid fa-border-all"></i> عرض جميع الأقسام
         </button>
-        <button class="tab-btn tab-men" onclick="showTab('dept-men', this)">
-            <i class="fa-solid fa-mars"></i> ردهة الرجال
+        <button class="tab-btn tab-men" id="tab-btn-card-men" onclick="showTab('card-men', this)">
+            <i class="fa-solid fa-mars"></i> <span id="label-card-men">ردهة الرجال</span>
         </button>
-        <button class="tab-btn tab-women" onclick="showTab('dept-women', this)">
-            <i class="fa-solid fa-venus"></i> ردهة النساء
+        <button class="tab-btn tab-women" id="tab-btn-card-women" onclick="showTab('card-women', this)">
+            <i class="fa-solid fa-venus"></i> <span id="label-card-women">ردهة النساء</span>
         </button>
-        <button class="tab-btn tab-med-icu" onclick="showTab('dept-med-icu', this)">
-            <i class="fa-solid fa-heart-pulse"></i> العناية الباطنية
+        <button class="tab-btn tab-med-icu" id="tab-btn-card-med-icu" onclick="showTab('card-med-icu', this)">
+            <i class="fa-solid fa-heart-pulse"></i> <span id="label-card-med-icu">العناية الباطنية</span>
         </button>
-        <button class="tab-btn tab-surg-icu" onclick="showTab('dept-surg-icu', this)">
-            <i class="fa-solid fa-scalpel"></i> العناية الجراحية
+        <button class="tab-btn tab-surg-icu" id="tab-btn-card-surg-icu" onclick="showTab('card-surg-icu', this)">
+            <i class="fa-solid fa-scalpel"></i> <span id="label-card-surg-icu">العناية الجراحية</span>
         </button>
     </div>
 
@@ -546,13 +565,8 @@
                     <div class="info-field-slim">
                         <i class="fa-solid fa-calendar-day"></i>
                         <select id="mainDaySelect" onchange="saveData()">
-                            <option>السبت</option>
-                            <option>الأحد</option>
-                            <option>الإثنين</option>
-                            <option>الثلاثاء</option>
-                            <option>الأربعاء</option>
-                            <option>الخميس</option>
-                            <option>الجمعة</option>
+                            <option>السبت</option><option>الأحد</option><option>الإثنين</option>
+                            <option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
                         </select>
                     </div>
 
@@ -567,12 +581,18 @@
         <div id="departmentsWrapper">
             <!-- ردهة الرجال -->
             <div class="dept-card dept-men" id="card-men">
-                <div class="dept-banner">
+                <div class="dept-banner" id="banner-card-men">
                     <div class="dept-title">
                         <i class="fa-solid fa-mars"></i>
-                        <input type="text" class="dept-title-editable" value="ردهة الرجال (Male Ward)" oninput="saveData()" />
+                        <input type="text" class="dept-title-editable" value="ردهة الرجال (Male Ward)" oninput="updateTabTitle('card-men', this.value); saveData();" />
                     </div>
-                    <button class="btn btn-add-patient action-element" onclick="addRow('men-tbody')">+ إضافة حالة</button>
+                    <div class="dept-actions">
+                        <label class="change-color-btn action-element">
+                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                            <input type="color" onchange="changeDeptColor('card-men', this.value)">
+                        </label>
+                        <button class="btn btn-add-patient action-element" onclick="addRow('men-tbody')">+ إضافة حالة</button>
+                    </div>
                 </div>
                 <div class="dept-sub-header">
                     <div class="dept-sub-field" style="flex:1;">
@@ -622,12 +642,18 @@
 
             <!-- ردهة النساء -->
             <div class="dept-card dept-women" id="card-women">
-                <div class="dept-banner">
+                <div class="dept-banner" id="banner-card-women">
                     <div class="dept-title">
                         <i class="fa-solid fa-venus"></i>
-                        <input type="text" class="dept-title-editable" value="ردهة النساء (Female Ward)" oninput="saveData()" />
+                        <input type="text" class="dept-title-editable" value="ردهة النساء (Female Ward)" oninput="updateTabTitle('card-women', this.value); saveData();" />
                     </div>
-                    <button class="btn btn-add-patient action-element" onclick="addRow('women-tbody')">+ إضافة حالة</button>
+                    <div class="dept-actions">
+                        <label class="change-color-btn action-element">
+                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                            <input type="color" onchange="changeDeptColor('card-women', this.value)">
+                        </label>
+                        <button class="btn btn-add-patient action-element" onclick="addRow('women-tbody')">+ إضافة حالة</button>
+                    </div>
                 </div>
                 <div class="dept-sub-header">
                     <div class="dept-sub-field" style="flex:1;">
@@ -677,12 +703,18 @@
 
             <!-- العناية الباطنية -->
             <div class="dept-card dept-med-icu" id="card-med-icu">
-                <div class="dept-banner">
+                <div class="dept-banner" id="banner-card-med-icu">
                     <div class="dept-title">
                         <i class="fa-solid fa-heart-pulse"></i>
-                        <input type="text" class="dept-title-editable" value="العناية الباطنية (Medical ICU)" oninput="saveData()" />
+                        <input type="text" class="dept-title-editable" value="العناية الباطنية (Medical ICU)" oninput="updateTabTitle('card-med-icu', this.value); saveData();" />
                     </div>
-                    <button class="btn btn-add-patient action-element" onclick="addRow('med-icu-tbody')">+ إضافة حالة</button>
+                    <div class="dept-actions">
+                        <label class="change-color-btn action-element">
+                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                            <input type="color" onchange="changeDeptColor('card-med-icu', this.value)">
+                        </label>
+                        <button class="btn btn-add-patient action-element" onclick="addRow('med-icu-tbody')">+ إضافة حالة</button>
+                    </div>
                 </div>
                 <div class="dept-sub-header">
                     <div class="dept-sub-field" style="flex:1;">
@@ -732,12 +764,18 @@
 
             <!-- العناية الجراحية -->
             <div class="dept-card dept-surg-icu" id="card-surg-icu">
-                <div class="dept-banner">
+                <div class="dept-banner" id="banner-card-surg-icu">
                     <div class="dept-title">
                         <i class="fa-solid fa-scalpel"></i>
-                        <input type="text" class="dept-title-editable" value="العناية الجراحية (Surgical ICU)" oninput="saveData()" />
+                        <input type="text" class="dept-title-editable" value="العناية الجراحية (Surgical ICU)" oninput="updateTabTitle('card-surg-icu', this.value); saveData();" />
                     </div>
-                    <button class="btn btn-add-patient action-element" onclick="addRow('surg-icu-tbody')">+ إضافة حالة</button>
+                    <div class="dept-actions">
+                        <label class="change-color-btn action-element">
+                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                            <input type="color" onchange="changeDeptColor('card-surg-icu', this.value)">
+                        </label>
+                        <button class="btn btn-add-patient action-element" onclick="addRow('surg-icu-tbody')">+ إضافة حالة</button>
+                    </div>
                 </div>
                 <div class="dept-sub-header">
                     <div class="dept-sub-field" style="flex:1;">
@@ -802,15 +840,42 @@
 
         let dynamicDeptCounter = 0;
 
-        /* --- تغيير الخط الداعم لـ Beiruti وغيره --- */
+        // قائمة ألوان زاهية ومختلفة تلقائية للأقسام الجديدة
+        const presetColors = [
+            '#0891b2', // أزرق سيان
+            '#d97706', // برتقالي
+            '#4f46e5', // نيلي
+            '#059669', // زمردي
+            '#be185d', // وردي غامق
+            '#854d0e', // بني
+            '#4338ca'  // بنفسجي غامق
+        ];
+
+        /* --- تغيير الخط --- */
         function changeFontFamily(font) {
             document.documentElement.style.setProperty('--main-font', font);
             saveData();
         }
 
-        /* --- حفظ آخر تحديد نصي (Selection) --- */
-        let savedRange = null;
+        /* --- تغيير لون القسم والزر الخاص به --- */
+        function changeDeptColor(cardId, color) {
+            const banner = document.getElementById(`banner-${cardId}`);
+            const tabBtn = document.getElementById(`tab-btn-${cardId}`);
+            
+            if(banner) banner.style.backgroundColor = color;
+            if(tabBtn) tabBtn.style.backgroundColor = color;
 
+            saveData();
+        }
+
+        /* --- تحديث عنوان الأزرار العلوية (Tabs) عند تعديل اسم القسم --- */
+        function updateTabTitle(cardId, newTitle) {
+            const label = document.getElementById(`label-${cardId}`);
+            if(label) label.innerText = newTitle || 'قسم بدون عنوان';
+        }
+
+        /* --- حفظ واسترجاع التحديد للخط والنص --- */
+        let savedRange = null;
         function restoreSelection() {
             if (savedRange) {
                 const sel = window.getSelection();
@@ -833,12 +898,6 @@
             saveData();
         }
 
-        function changeCustomColor(color) {
-            restoreSelection();
-            document.execCommand('foreColor', false, color);
-            saveData();
-        }
-
         function applyFormat(event, command) {
             event.preventDefault();
             restoreSelection();
@@ -846,14 +905,14 @@
             saveData();
         }
 
-        /* --- التنقل بين الأقسام عبر الأزرار (Tabs) --- */
-        function showTab(targetClass, btn) {
+        /* --- التبديل بين الأقسام (Tabs) --- */
+        function showTab(targetCardId, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             const cards = document.querySelectorAll('.dept-card');
             cards.forEach(card => {
-                if (targetClass === 'all' || card.classList.contains(targetClass)) {
+                if (targetCardId === 'all' || card.id === targetCardId) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
@@ -861,59 +920,67 @@
             });
         }
 
-        /* --- إضافة قسم / مكان جديد خامس، سادس... الخ --- */
-        function addNewDepartment(name = '', idNum = null) {
-            dynamicDeptCounter = idNum ? Math.max(dynamicDeptCounter, idNum) : dynamicDeptCounter + 1;
-            const currentId = idNum || dynamicDeptCounter;
-            const deptId = `dept-custom-${currentId}`;
-            const tbodyId = `custom-tbody-${currentId}`;
-            const deptName = name || `المكان الخامِس / القسم الجديد ${currentId}`;
+        /* --- إضافة قسم جديد بألوان مميزة وتعديل شامل --- */
+        function addNewDepartment() {
+            dynamicDeptCounter++;
+            const cardId = `card-custom-${dynamicDeptCounter}`;
+            const tbodyId = `custom-tbody-${dynamicDeptCounter}`;
+            const deptName = `قسم جديد ${dynamicDeptCounter}`;
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // 1. إضافة الزر للتنقل السريع (Tab)
+            // اختيار لون تلقائي مميز ومختلف
+            const autoColor = presetColors[(dynamicDeptCounter - 1) % presetColors.length];
+
+            // 1. إضافة الزر العلوي للتنقل (Tab)
             const tabsContainer = document.getElementById('tabsContainer');
             const tabBtn = document.createElement('button');
-            tabBtn.className = `tab-btn tab-dynamic tab-btn-${deptId}`;
-            tabBtn.onclick = function() { showTab(deptId, this); };
-            tabBtn.innerHTML = `<i class="fa-solid fa-hospital-user"></i> <span id="tab-label-${deptId}">${deptName}</span>`;
+            tabBtn.className = 'tab-btn';
+            tabBtn.id = `tab-btn-${cardId}`;
+            tabBtn.style.backgroundColor = autoColor;
+            tabBtn.onclick = function() { showTab(cardId, this); };
+            tabBtn.innerHTML = `<i class="fa-solid fa-hospital-user"></i> <span id="label-${cardId}">${deptName}</span>`;
             tabsContainer.appendChild(tabBtn);
 
-            // 2. إضافة كارت القسم الجديد بالكامل
+            // 2. إنشاء كارت القسم الجديد
             const wrapper = document.getElementById('departmentsWrapper');
             const card = document.createElement('div');
-            card.className = `dept-card dept-dynamic ${deptId}`;
-            card.id = `card-${deptId}`;
+            card.className = 'dept-card';
+            card.id = cardId;
             card.innerHTML = `
-                <div class="dept-banner">
+                <div class="dept-banner" id="banner-${cardId}" style="background-color: ${autoColor}">
                     <div class="dept-title">
                         <i class="fa-solid fa-hospital-user"></i>
-                        <input type="text" class="dept-title-editable" value="${deptName}" oninput="updateTabTitle('${deptId}', this.value); saveData();" />
+                        <input type="text" class="dept-title-editable" value="${deptName}" oninput="updateTabTitle('${cardId}', this.value); saveData();" />
                     </div>
-                    <div>
+                    <div class="dept-actions">
+                        <label class="change-color-btn action-element">
+                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                            <input type="color" value="${autoColor}" onchange="changeDeptColor('${cardId}', this.value)">
+                        </label>
                         <button class="btn btn-add-patient action-element" onclick="addRow('${tbodyId}')">+ إضافة حالة</button>
-                        <button class="delete-dept-btn action-element" onclick="removeDepartment('${deptId}')"><i class="fa-solid fa-trash"></i> حذف القسم</button>
+                        <button class="delete-dept-btn action-element" onclick="removeDepartment('${cardId}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
                     <div class="dept-sub-field" style="flex:1;">
                         <i class="fa-solid fa-user-doctor"></i>
                         <span>تسليم إلى:</span>
-                        <input type="text" id="doc-${deptId}" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:200px;">
+                        <input type="text" id="doc-${cardId}" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:200px;">
                     </div>
                     <div class="dept-sub-field">
                         <i class="fa-solid fa-phone"></i>
                         <span>الهاتف:</span>
-                        <input type="tel" id="phone-${deptId}" placeholder="رقم الهاتف" oninput="saveData()" style="width:120px;">
+                        <input type="tel" id="phone-${cardId}" placeholder="رقم الهاتف" oninput="saveData()" style="width:120px;">
                     </div>
                     <div class="dept-sub-field">
                         <i class="fa-solid fa-calendar-day"></i>
-                        <select id="day-${deptId}" onchange="saveData()">
+                        <select id="day-${cardId}" onchange="saveData()">
                             <option>السبت</option><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
                         </select>
                     </div>
                     <div class="dept-sub-field">
                         <i class="fa-solid fa-calendar-check"></i>
-                        <input type="date" id="date-${deptId}" value="${todayStr}" onchange="saveData()">
+                        <input type="date" id="date-${cardId}" value="${todayStr}" onchange="saveData()">
                     </div>
                 </div>
                 <table>
@@ -943,17 +1010,12 @@
             saveData();
         }
 
-        function updateTabTitle(deptId, val) {
-            const label = document.getElementById(`tab-label-${deptId}`);
-            if(label) label.innerText = val || 'قسم جديد';
-        }
-
-        function removeDepartment(deptId) {
-            if(confirm('هل أنت متأكد من حذف هذا المكان بجميع بياناته؟')) {
-                const card = document.getElementById(`card-${deptId}`);
+        function removeDepartment(cardId) {
+            if(confirm('هل أنت متأكد من حذف هذا القسم بجميع بياناته؟')) {
+                const card = document.getElementById(cardId);
                 if(card) card.remove();
                 
-                const tab = document.querySelector(`.tab-btn-${deptId}`);
+                const tab = document.getElementById(`tab-btn-${cardId}`);
                 if(tab) tab.remove();
 
                 saveData();
@@ -989,35 +1051,15 @@
                 selectedFont: fontSelect ? fontSelect.value : "'Cairo', sans-serif",
                 mainDay: document.getElementById('mainDaySelect').value,
                 mainDate: document.getElementById('mainDateInput').value,
-                
-                docMen: document.getElementById('doc-men').value,
-                phoneMen: document.getElementById('phone-men').value,
-                dayMen: document.getElementById('day-men').value,
-                dateMen: document.getElementById('date-men').value,
-
-                docWomen: document.getElementById('doc-women').value,
-                phoneWomen: document.getElementById('phone-women').value,
-                dayWomen: document.getElementById('day-women').value,
-                dateWomen: document.getElementById('date-women').value,
-
-                docMedIcu: document.getElementById('doc-med-icu').value,
-                phoneMedIcu: document.getElementById('phone-med-icu').value,
-                dayMedIcu: document.getElementById('day-med-icu').value,
-                dateMedIcu: document.getElementById('date-med-icu').value,
-
-                docSurgIcu: document.getElementById('doc-surg-icu').value,
-                phoneSurgIcu: document.getElementById('phone-surg-icu').value,
-                daySurgIcu: document.getElementById('day-surg-icu').value,
-                dateSurgIcu: document.getElementById('date-surg-icu').value,
-
-                // الحاويات المرنة (الأقسام المضافة والتغييرات)
-                htmlContent: document.getElementById('departmentsWrapper').innerHTML
+                htmlContent: document.getElementById('departmentsWrapper').innerHTML,
+                tabsContent: document.getElementById('tabsContainer').innerHTML,
+                dynamicCounter: dynamicDeptCounter
             };
-            localStorage.setItem('handoverDataMap', JSON.stringify(data));
+            localStorage.setItem('handoverDataMap_v2', JSON.stringify(data));
         }
 
         function loadData() {
-            const saved = localStorage.getItem('handoverDataMap');
+            const saved = localStorage.getItem('handoverDataMap_v2');
             const todayStr = new Date().toISOString().split('T')[0];
 
             if (saved) {
@@ -1032,29 +1074,9 @@
                 if(data.mainDay) document.getElementById('mainDaySelect').value = data.mainDay;
                 if(data.mainDate) document.getElementById('mainDateInput').value = data.mainDate;
 
-                if(data.htmlContent) {
-                    document.getElementById('departmentsWrapper').innerHTML = data.htmlContent;
-                }
-
-                if(data.docMen) document.getElementById('doc-men').value = data.docMen;
-                if(data.phoneMen) document.getElementById('phone-men').value = data.phoneMen;
-                if(data.dayMen) document.getElementById('day-men').value = data.dayMen;
-                if(data.dateMen) document.getElementById('date-men').value = data.dateMen;
-
-                if(data.docWomen) document.getElementById('doc-women').value = data.docWomen;
-                if(data.phoneWomen) document.getElementById('phone-women').value = data.phoneWomen;
-                if(data.dayWomen) document.getElementById('day-women').value = data.dayWomen;
-                if(data.dateWomen) document.getElementById('date-women').value = data.dateWomen;
-
-                if(data.docMedIcu) document.getElementById('doc-med-icu').value = data.docMedIcu;
-                if(data.phoneMedIcu) document.getElementById('phone-med-icu').value = data.phoneMedIcu;
-                if(data.dayMedIcu) document.getElementById('day-med-icu').value = data.dayMedIcu;
-                if(data.dateMedIcu) document.getElementById('date-med-icu').value = data.dateMedIcu;
-
-                if(data.docSurgIcu) document.getElementById('doc-surg-icu').value = data.docSurgIcu;
-                if(data.phoneSurgIcu) document.getElementById('phone-surg-icu').value = data.phoneSurgIcu;
-                if(data.daySurgIcu) document.getElementById('day-surg-icu').value = data.daySurgIcu;
-                if(data.dateSurgIcu) document.getElementById('date-surg-icu').value = data.dateSurgIcu;
+                if(data.htmlContent) document.getElementById('departmentsWrapper').innerHTML = data.htmlContent;
+                if(data.tabsContent) document.getElementById('tabsContainer').innerHTML = data.tabsContent;
+                if(data.dynamicCounter) dynamicDeptCounter = data.dynamicCounter;
 
             } else {
                 document.getElementById('mainDateInput').value = todayStr;
@@ -1067,7 +1089,7 @@
 
         function clearData() {
             if (confirm('هل أنت متأكد من مسح جميع البيانات المدخلة والبدء من جديد؟')) {
-                localStorage.removeItem('handoverDataMap');
+                localStorage.removeItem('handoverDataMap_v2');
                 location.reload();
             }
         }
