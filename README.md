@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patients-handover-map</title>
+    <title>Hospital Patients-handover-map</title>
     
     <!-- FontAwesome Icons & Google Fonts Cairo -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,7 +14,7 @@
             --color-men: #065f46;         /* أخضر غامق */
             --color-women: #7e22ce;       /* بنفسجي */
             --color-med-icu: #dc2626;     /* أحمر */
-            --color-surg-icu: #0f172a;    /* أزرق غامق جداً */
+            --color-surg-icu: #0f2b48;    /* أزرق غامق چويتي (Navy) */
             --bg-body: #f8fafc;
         }
 
@@ -158,14 +158,17 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* 1. صندوق النحاسي الفاتح الخاص بالاسم */
+        /* 1. صندوق النحاسي الفاتح الخاص بالاسم والشعار */
         .bronze-badge-container {
             text-align: center;
             margin-bottom: 12px;
         }
 
         .bronze-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             background-color: #e6c594; /* لون نحاسي فاتح */
             color: #000000;             /* خط أسود */
             font-weight: 800;
@@ -175,6 +178,10 @@
             border: 1px solid #d4a359;
             letter-spacing: 0.5px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        .bronze-badge i {
+            font-size: 20px;
         }
 
         /* 2. صندوق الوصف الرفيع جداً (Compact Header Box) */
@@ -375,6 +382,7 @@
             <div class="color-dot" style="background:#dc2626;" onclick="changeTextColor('#dc2626')" title="أحمر"></div>
             <div class="color-dot" style="background:#16a34a;" onclick="changeTextColor('#16a34a')" title="أخضر"></div>
             <div class="color-dot" style="background:#2563eb;" onclick="changeTextColor('#2563eb')" title="أزرق"></div>
+            <div class="color-dot" style="background:#0f2b48;" onclick="changeTextColor('#0f2b48')" title="أزرق غامق چويتي"></div>
             <div class="color-dot" style="background:#7e22ce;" onclick="changeTextColor('#7e22ce')" title="بنفسجي"></div>
             <div class="color-dot" style="background:#065f46;" onclick="changeTextColor('#065f46')" title="أخضر غامق"></div>
             <div class="color-dot" style="background:#000000;" onclick="changeTextColor('#000000')" title="أسود"></div>
@@ -404,10 +412,11 @@
     <!-- المحتوى القابل للتعديل والطباعة -->
     <div id="pdf-content">
 
-        <!-- 1. صندوق نحاسي فاتح مع خط أسود عريض -->
+        <!-- 1. صندوق نحاسي فاتح مع شعار طبي واسم الخدمة -->
         <div class="bronze-badge-container">
             <div class="bronze-badge">
-                Patients-handover-map
+                <i class="fa-solid fa-hospital-user"></i>
+                <span>Hospital Patients-handover-map</span>
             </div>
         </div>
 
@@ -545,7 +554,7 @@
             </table>
         </div>
 
-        <!-- 4. العناية الجراحية -->
+        <!-- 4. العناية الجراحية (أزرق غامق چويتي) -->
         <div class="dept-card dept-surg-icu">
             <div class="dept-banner">
                 <div class="dept-title">
