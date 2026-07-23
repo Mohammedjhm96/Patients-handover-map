@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Patients-handover-map</title>
     
+    <!-- Icons & Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -700,6 +701,7 @@
 
     </div>
 
+    <!-- Firebase Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -736,6 +738,7 @@
         });
     </script>
 
+    <!-- Application Logic Script -->
     <script>
         const APP_PASSWORD = "1020";
         window.isEditMode = false;
@@ -1339,26 +1342,22 @@
             }
         }
 
-        /* دالة تصفير البيانات: تقوم بتفريغ البيانات والمدخلات فقط دون مسح الأقسام الرئيسية والفرعية */
         function clearData() {
             if (confirm('هل أنت متأكد من تصفير جميع مدخلات المرضى والأطباء مع الحفاظ على كافة الأقسام الرئيسية والفرعية؟')) {
                 const wrapper = document.getElementById('departmentsWrapper');
                 if (!wrapper) return;
 
-                // 1. تفريغ قيم جميع الخلايا (اسم المريض، العمر، الاختصاص، التشخيص، الخطة) مع الاستثناء لـ Bed Badge
                 wrapper.querySelectorAll('.cell-editable').forEach(cell => {
                     if (!cell.classList.contains('bed-badge')) {
                         cell.innerHTML = '';
                     }
                 });
 
-                // 2. تفريغ مدخلات الأطباء والهواتف في ترويسات الأقسام الفرعية والرئيسية
                 wrapper.querySelectorAll('.dept-sub-header input').forEach(input => {
                     input.value = '';
                     input.setAttribute('value', '');
                 });
 
-                // 3. إرجاع مقياس GCS في كل الأقسام إلى القيمة الافتراضية 15/15
                 wrapper.querySelectorAll('.gcs-compact-badge').forEach(badge => {
                     badge.setAttribute('data-e', '4');
                     badge.setAttribute('data-v', '5');
@@ -1367,7 +1366,6 @@
                     if (valSpan) valSpan.innerText = '15/15';
                 });
 
-                // 4. حفظ الحالة المحدثة مباشرة
                 saveData();
             }
         }
