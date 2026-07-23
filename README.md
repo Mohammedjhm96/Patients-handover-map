@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Beiruti:wght@400;600;700;800&family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- html2canvas لتحويل بطاقة المريض إلى صورة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root {
@@ -23,26 +26,19 @@
         * { box-sizing: border-box; font-family: var(--main-font); }
         body { background-color: var(--bg-body); margin: 0; padding: 15px; color: #1e293b; }
 
-        /* Auth Modal */
-        #authModal {
+        /* Modals (Auth, GCS, Share) */
+        #authModal, #gcsModal, #shareModal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
             z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px;
         }
 
-        /* GCS Modal */
-        #gcsModal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(3px);
-            z-index: 99998; display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-
-        .auth-card, .gcs-card {
+        .auth-card, .gcs-card, .share-card {
             background: #ffffff; padding: 22px; border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; max-width: 380px; width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; max-width: 420px; width: 100%;
         }
-        .auth-card i, .gcs-card i.head-icon { font-size: 36px; color: #2563eb; margin-bottom: 8px; }
-        .auth-card h3, .gcs-card h3 { margin: 0 0 12px 0; color: #0f172a; font-size: 16px; }
+        .auth-card i, .gcs-card i.head-icon, .share-card i.head-icon { font-size: 36px; color: #2563eb; margin-bottom: 8px; }
+        .auth-card h3, .gcs-card h3, .share-card h3 { margin: 0 0 12px 0; color: #0f172a; font-size: 16px; }
         .auth-card p { color: #64748b; font-size: 13px; margin-bottom: 15px; }
         .auth-card input {
             width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;
@@ -52,19 +48,15 @@
         .btn-group button { flex: 1; padding: 9px; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; }
         .btn-confirm { background: #2563eb; color: white; }
         .btn-cancel { background: #e2e8f0; color: #475569; }
+        .btn-share-text { background: #16a34a; color: white; }
+        .btn-share-img { background: #0284c7; color: white; }
         .error-msg { color: #ef4444; font-size: 12px; font-weight: 700; margin-top: 8px; display: none; }
 
         /* GCS Modal Form Styles */
-        .gcs-calc-field {
-            display: flex; flex-direction: column; gap: 4px; text-align: right; margin-bottom: 10px;
-        }
+        .gcs-calc-field { display: flex; flex-direction: column; gap: 4px; text-align: right; margin-bottom: 10px; }
         .gcs-calc-field label { font-size: 12px; font-weight: 700; color: #334155; }
-        .gcs-calc-field select {
-            padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; background: #f8fafc;
-        }
-        .gcs-modal-score {
-            font-size: 15px; font-weight: 800; color: #dc2626; background: #fef2f2; padding: 8px; border-radius: 8px; border: 1px solid #fca5a5; margin-top: 10px;
-        }
+        .gcs-calc-field select { padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; background: #f8fafc; }
+        .gcs-modal-score { font-size: 15px; font-weight: 800; color: #dc2626; background: #fef2f2; padding: 8px; border-radius: 8px; border: 1px solid #fca5a5; margin-top: 10px; }
 
         .controls-card {
             max-width: 1150px; margin: 0 auto 15px auto; background: #ffffff; border-radius: 12px;
@@ -88,12 +80,12 @@
         .btn-add-subdept { background: #0d9488; color: white; padding: 4px 8px; font-size: 11px; border-radius: 6px; }
         .btn-fmt { background: #0f172a; color: white; padding: 6px 12px; }
 
-        .font-select-control {
-            padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1;
-            font-size: 12px; font-weight: 700; outline: none; cursor: pointer; background: #fff;
-        }
+        .font-select-control { padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; font-weight: 700; outline: none; cursor: pointer; background: #fff; }
 
         .btn-add-patient { background: #ffffff; color: #0f172a; padding: 4px 8px; font-size: 11px; border-radius: 6px; font-weight: 800; }
+        .btn-share-patient { background: #2563eb; color: #ffffff; border: none; padding: 2px 6px; font-size: 10px; border-radius: 4px; font-weight: 700; cursor: pointer; margin-right: 4px; display: inline-flex; align-items: center; gap: 3px; }
+        .btn-share-patient:hover { background: #1d4ed8; }
+
         .color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.15); cursor: pointer; display: inline-block; }
 
         .dept-tabs { max-width: 1150px; margin: 0 auto 15px auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
@@ -115,11 +107,7 @@
         }
 
         .bronze-badge-container { text-align: center; margin-bottom: 12px; }
-        .bronze-badge {
-            display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-            background-color: #e6c594; color: #000000; font-weight: 800; font-size: 18px;
-            padding: 6px 24px; border-radius: 8px; border: 1px solid #d4a359;
-        }
+        .bronze-badge { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background-color: #e6c594; color: #000000; font-weight: 800; font-size: 18px; padding: 6px 24px; border-radius: 8px; border: 1px solid #d4a359; }
 
         .header-box-slim { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-radius: 10px; padding: 10px 16px; margin-bottom: 18px; }
         .header-flex { display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
@@ -156,36 +144,13 @@
         td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; vertical-align: middle; }
 
         .cell-editable { outline: none; min-height: 22px; padding: 3px; border-radius: 4px; }
+        .cell-plan { color: #0369a1; font-weight: 600; } /* لون افتراضي ميز للخطة العلاجية */
         
         .text-black { color: #000000 !important; font-weight: 600; }
         .text-darkblue { color: #1e3a8a !important; font-weight: 700; }
-        .text-gcs-red { color: #dc2626 !important; font-weight: 800; }
 
-        /* Compact GCS Display Box in Table Cell */
-        .gcs-compact-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #fff0f0;
-            border: 1px solid #fca5a5;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-weight: 800;
-            color: #dc2626;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .gcs-calc-btn {
-            background: #dc2626;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 2px 5px;
-            font-size: 11px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        .gcs-compact-badge { display: inline-flex; align-items: center; gap: 6px; background: #fff0f0; border: 1px solid #fca5a5; padding: 3px 8px; border-radius: 6px; font-weight: 800; color: #dc2626; font-size: 12px; white-space: nowrap; }
+        .gcs-calc-btn { background: #dc2626; color: white; border: none; border-radius: 4px; padding: 2px 5px; font-size: 11px; cursor: pointer; transition: background 0.2s; }
         .gcs-calc-btn:hover { background: #b91c1c; }
 
         body.read-only-mode .edit-only { display: none !important; }
@@ -212,8 +177,13 @@
 
         .floating-edit-btn.active { background: #dc2626; transform: rotate(360deg); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4); }
 
+        /* منطقة توليد كارت المريض كصورة */
+        #singlePatientCardRender {
+            position: absolute; left: -9999px; top: -9999px; width: 500px; background: #ffffff; padding: 20px; border-radius: 12px; border: 2px solid #0f172a; font-family: 'Cairo', sans-serif;
+        }
+
         @media print {
-            #authModal, #gcsModal, .controls-card, .dept-tabs, .action-element, .edit-only, .floating-edit-btn, .gcs-calc-btn { display: none !important; }
+            #authModal, #gcsModal, #shareModal, .controls-card, .dept-tabs, .action-element, .edit-only, .floating-edit-btn, .gcs-calc-btn, .btn-share-patient { display: none !important; }
             body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #pdf-content { box-shadow: none; padding: 0; border: none; width: 100%; max-width: 100%; }
             @page { size: A4 portrait; margin: 8mm; }
@@ -241,7 +211,7 @@
         </div>
     </div>
 
-    <!-- GCS Calculator Popup Modal -->
+    <!-- GCS Modal -->
     <div id="gcsModal">
         <div class="gcs-card">
             <i class="fa-solid fa-brain head-icon"></i>
@@ -291,6 +261,24 @@
         </div>
     </div>
 
+    <!-- Share Patient Modal -->
+    <div id="shareModal">
+        <div class="share-card">
+            <i class="fa-solid fa-share-nodes head-icon"></i>
+            <h3>مشاركة حالة المريض</h3>
+            <p id="sharePatientName" style="font-weight:700; color:#0f172a; margin-bottom:10px;"></p>
+            
+            <div class="btn-group" style="flex-direction:column;">
+                <button class="btn-share-text" onclick="sharePatientAsText()"><i class="fa-solid fa-copy"></i> نسخ كأنص مرتب للمشاركة</button>
+                <button class="btn-share-img" onclick="downloadPatientAsImage()"><i class="fa-solid fa-image"></i> تحميل / مشاركة كبطاقة صورة</button>
+                <button class="btn-cancel" onclick="closeShareModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden element for image rendering -->
+    <div id="singlePatientCardRender"></div>
+
     <div class="controls-card">
         <div class="tool-group">
             <button class="btn btn-mode" id="toggleEditBtn" onclick="openAuthModal()">
@@ -311,7 +299,7 @@
         </div>
 
         <div class="tool-group edit-only">
-            <span class="tool-title"><i class="fa-solid fa-font"></i> الخط:</span>
+            <span class="tool-title"><i class="fa-solid fa-font"></i> الخط وتلوين النص:</span>
             <select class="font-select-control" onchange="changeFontFamily(this.value)">
                 <option value="'Cairo', sans-serif">Cairo (الافتراضي)</option>
                 <option value="'Beiruti', sans-serif">Beiruti (بيروتي)</option>
@@ -327,11 +315,12 @@
                 <i class="fa-solid fa-remove-format"></i>
             </button>
 
-            <div class="color-dot" style="background:#dc2626;" onmousedown="applyColor(event, '#dc2626')"></div>
-            <div class="color-dot" style="background:#16a34a;" onmousedown="applyColor(event, '#16a34a')"></div>
-            <div class="color-dot" style="background:#2563eb;" onmousedown="applyColor(event, '#2563eb')"></div>
-            <div class="color-dot" style="background:#0f2b48;" onmousedown="applyColor(event, '#0f2b48')"></div>
-            <div class="color-dot" style="background:#000000;" onmousedown="applyColor(event, '#000000')"></div>
+            <!-- لوحة اختيار ألوان النص للخطة والتفاصيل -->
+            <div class="color-dot" style="background:#0369a1;" title="أزرق" onmousedown="applyColor(event, '#0369a1')"></div>
+            <div class="color-dot" style="background:#dc2626;" title="أحمر" onmousedown="applyColor(event, '#dc2626')"></div>
+            <div class="color-dot" style="background:#16a34a;" title="أخضر" onmousedown="applyColor(event, '#16a34a')"></div>
+            <div class="color-dot" style="background:#7e22ce;" title="بنفسجي" onmousedown="applyColor(event, '#7e22ce')"></div>
+            <div class="color-dot" style="background:#000000;" title="أسود" onmousedown="applyColor(event, '#000000')"></div>
         </div>
     </div>
 
@@ -429,12 +418,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 7%;">الحالة</th>
+                            <th style="width: 10%;">الحالة</th>
                             <th style="width: 18%;">اسم المريض</th>
                             <th style="width: 6%;">العمر</th>
                             <th style="width: 18%;">الطبيب الاختصاص</th>
-                            <th style="width: 23%;">التشخيص الطبي</th>
-                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 21%;">التشخيص الطبي</th>
+                            <th style="width: 22%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
@@ -443,7 +432,6 @@
                 </table>
 
                 <div class="sub-dept-container" id="sub-container-card-men">
-                    <!-- قسم فرعي: ردهة الجراحة العصبية مع حاسبة GCS المدمجة -->
                     <div class="sub-dept-card" id="sub-neurosurg">
                         <div class="sub-dept-banner" id="sub-banner-sub-neurosurg" style="background-color: #831843;">
                             <div style="display:flex; align-items:center; gap:6px; flex:1;">
@@ -462,19 +450,22 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th style="width: 7%;">الحالة</th>
+                                    <th style="width: 10%;">الحالة</th>
                                     <th style="width: 18%;">اسم المريض</th>
                                     <th style="width: 6%;">العمر</th>
                                     <th style="width: 14%;">مقياس الوعي (GCS)</th>
-                                    <th style="width: 17%;">الطبيب الاختصاص</th>
-                                    <th style="width: 18%;">التشخيص الطبي</th>
+                                    <th style="width: 16%;">الطبيب الاختصاص</th>
+                                    <th style="width: 16%;">التشخيص الطبي</th>
                                     <th style="width: 15%;">الخطة العلاجية والتفاصيل</th>
                                     <th class="edit-only" style="width: 5%;"></th>
                                 </tr>
                             </thead>
                             <tbody id="sub-neurosurg-tbody">
                                 <tr>
-                                    <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                                    <td>
+                                        <span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span>
+                                        <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                                    </td>
                                     <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">خالد مروان</div></td>
                                     <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">34</div></td>
                                     <td>
@@ -485,7 +476,7 @@
                                     </td>
                                     <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">د. ممدوح مصلح</div></td>
                                     <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">Head Injury</div></td>
-                                    <td><div class="cell-editable" contenteditable="false" oninput="saveData()">متابعة حالة الوعي</div></td>
+                                    <td><div class="cell-editable cell-plan" contenteditable="false" oninput="saveData()">متابعة حالة الوعي وإجراء الفحوصات</div></td>
                                     <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                                 </tr>
                             </tbody>
@@ -535,23 +526,26 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 7%;">الحالة</th>
+                            <th style="width: 10%;">الحالة</th>
                             <th style="width: 18%;">اسم المريضة</th>
                             <th style="width: 6%;">العمر</th>
                             <th style="width: 18%;">الطبيب الاختصاص</th>
-                            <th style="width: 23%;">التشخيص الطبي</th>
-                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 21%;">التشخيص الطبي</th>
+                            <th style="width: 22%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="women-tbody">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                            <td>
+                                <span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span>
+                                <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                            </td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable cell-plan" contenteditable="false" oninput="saveData()"></div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
@@ -600,23 +594,26 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 7%;">الحالة</th>
+                            <th style="width: 10%;">الحالة</th>
                             <th style="width: 18%;">اسم المريض</th>
                             <th style="width: 6%;">العمر</th>
                             <th style="width: 18%;">الطبيب الاختصاص</th>
-                            <th style="width: 23%;">التشخيص الطبي</th>
-                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 21%;">التشخيص الطبي</th>
+                            <th style="width: 22%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="med-icu-tbody">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                            <td>
+                                <span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span>
+                                <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                            </td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">محمد نزار</div></td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">58</div></td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">د مصعب</div></td>
                             <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">IHD</div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable cell-plan" contenteditable="false" oninput="saveData()">متابعة العلاج الذاتي</div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
@@ -665,23 +662,26 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 7%;">الحالة</th>
+                            <th style="width: 10%;">الحالة</th>
                             <th style="width: 18%;">اسم المريض</th>
                             <th style="width: 6%;">العمر</th>
                             <th style="width: 18%;">الطبيب الاختصاص</th>
-                            <th style="width: 23%;">التشخيص الطبي</th>
-                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 21%;">التشخيص الطبي</th>
+                            <th style="width: 22%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="surg-icu-tbody">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                            <td>
+                                <span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span>
+                                <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                            </td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable cell-plan" contenteditable="false" oninput="saveData()"></div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
@@ -740,6 +740,7 @@
         const APP_PASSWORD = "1020";
         window.isEditMode = false;
         let activeGcsTarget = null;
+        let activePatientRow = null;
 
         function openAuthModal() {
             if (window.isEditMode) {
@@ -814,6 +815,116 @@
             closeGCSModal();
             saveData();
         };
+
+        /* --- وظائف مشاركة المريض --- */
+        window.openShareModal = function(btn) {
+            activePatientRow = btn.closest('tr');
+            if(!activePatientRow) return;
+
+            const cells = activePatientRow.querySelectorAll('td');
+            let name = cells[1] ? cells[1].innerText.trim() : '';
+            let caseNo = cells[0] ? cells[0].querySelector('.bed-badge').innerText.trim() : '';
+
+            document.getElementById('sharePatientName').innerText = `المريض: ${name || caseNo || 'بدون اسم'}`;
+            document.getElementById('shareModal').style.display = 'flex';
+        };
+
+        window.closeShareModal = function() {
+            document.getElementById('shareModal').style.display = 'none';
+            activePatientRow = null;
+        };
+
+        function getPatientDetailsData() {
+            if(!activePatientRow) return null;
+
+            const cells = activePatientRow.querySelectorAll('td');
+            const hasGcs = activePatientRow.querySelector('.gcs-compact-badge') !== null;
+            
+            let deptCard = activePatientRow.closest('.dept-card');
+            let deptName = deptCard ? deptCard.querySelector('.dept-title-editable').value : '';
+
+            let caseNo = cells[0].querySelector('.bed-badge').innerText.trim();
+            let name = cells[1].innerText.trim();
+            let age = cells[2].innerText.trim();
+            
+            let gcs = '';
+            let docIndex = 3, diagIndex = 4, planIndex = 5;
+
+            if(hasGcs) {
+                const gcsBadge = cells[3].querySelector('.gcs-val');
+                gcs = gcsBadge ? gcsBadge.innerText.trim() : '15/15';
+                docIndex = 4; diagIndex = 5; planIndex = 6;
+            }
+
+            let doctor = cells[docIndex] ? cells[docIndex].innerText.trim() : '';
+            let diag = cells[diagIndex] ? cells[diagIndex].innerText.trim() : '';
+            let plan = cells[planIndex] ? cells[planIndex].innerText.trim() : '';
+
+            return { deptName, caseNo, name, age, gcs, doctor, diag, plan };
+        }
+
+        window.sharePatientAsText = function() {
+            const data = getPatientDetailsData();
+            if(!data) return;
+
+            let text = `🏥 *تقرير حالة مريض - ${data.deptName}*\n`;
+            text += `📌 *الحالة:* ${data.caseNo}\n`;
+            if(data.name) text += `👤 *الاسم:* ${data.name}\n`;
+            if(data.age) text += `🎂 *العمر:* ${data.age}\n`;
+            if(data.gcs) text += `🧠 *مقياس GCS:* ${data.gcs}\n`;
+            if(data.doctor) text += `👨‍⚕️ *الطبيب الاختصاص:* ${data.doctor}\n`;
+            if(data.diag) text += `🩺 *التشخيص:* ${data.diag}\n`;
+            if(data.plan) text += `📝 *الخطة العلاجية والتفاصيل:* ${data.plan}\n`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('تم نسخ تفاصيل المريض كأنص مرتب بنجاح! يمكنك لصقه في WhatsApp الآن.');
+                closeShareModal();
+            }).catch(err => {
+                alert('حدث خطأ أثناء النسخ.');
+            });
+        };
+
+        window.downloadPatientAsImage = function() {
+            const data = getPatientDetailsData();
+            if(!data) return;
+
+            const renderContainer = document.getElementById('singlePatientCardRender');
+            renderContainer.innerHTML = `
+                <div style="text-align:center; border-bottom:2px solid #0284c7; padding-bottom:10px; margin-bottom:12px;">
+                    <h3 style="margin:0; color:#0f172a; font-size:16px;">مستشفى طوارىء ام الربيعين 🌼</h3>
+                    <p style="margin:3px 0 0 0; color:#0284c7; font-weight:800; font-size:14px;">${data.deptName} - ${data.caseNo}</p>
+                </div>
+                <table style="width:100%; border-collapse:collapse; text-align:right;">
+                    <tr><td style="padding:6px; font-weight:800; width:35%; border-bottom:1px solid #e2e8f0;">اسم المريض:</td><td style="padding:6px; border-bottom:1px solid #e2e8f0; color:#000;">${data.name || '-'}</td></tr>
+                    <tr><td style="padding:6px; font-weight:800; border-bottom:1px solid #e2e8f0;">العمر:</td><td style="padding:6px; border-bottom:1px solid #e2e8f0;">${data.age || '-'}</td></tr>
+                    ${data.gcs ? `<tr><td style="padding:6px; font-weight:800; border-bottom:1px solid #e2e8f0;">مقياس الوعي GCS:</td><td style="padding:6px; border-bottom:1px solid #e2e8f0; color:#dc2626; font-weight:800;">${data.gcs}</td></tr>` : ''}
+                    <tr><td style="padding:6px; font-weight:800; border-bottom:1px solid #e2e8f0;">الطبيب الاختصاص:</td><td style="padding:6px; border-bottom:1px solid #e2e8f0;">${data.doctor || '-'}</td></tr>
+                    <tr><td style="padding:6px; font-weight:800; border-bottom:1px solid #e2e8f0;">التشخيص الطبي:</td><td style="padding:6px; border-bottom:1px solid #e2e8f0; color:#1e3a8a; font-weight:700;">${data.diag || '-'}</td></tr>
+                    <tr><td style="padding:6px; font-weight:800; border-bottom:1px solid #e2e8f0;">الخطة العلاجية:</td><td style="padding:6px; border-bottom:1px solid #e2e8f0; color:#0369a1; font-weight:700;">${data.plan || '-'}</td></tr>
+                </table>
+                <div style="margin-top:12px; text-align:center; font-size:10px; color:#64748b; direction:ltr;">Developed by dr. Mohammad Jasim</div>
+            `;
+
+            html2canvas(renderContainer).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Patient_${data.caseNo}_${data.name || 'Report'}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                closeShareModal();
+            });
+        };
+
+        function applyFormat(e, command, value = null) {
+            e.preventDefault();
+            document.execCommand(command, false, value);
+            saveData();
+        }
+
+        function applyColor(e, color) {
+            e.preventDefault();
+            document.execCommand('foreColor', false, color);
+            saveData();
+        }
 
         function toggleEditModeFloating() {
             if (window.isEditMode) {
@@ -895,7 +1006,6 @@
             });
         }
 
-        /* --- إضافة قسم فرعي وقسم رئيسي والدوال الخاصة بها --- */
         window.addSubDepartment = function(parentCardId) {
             const container = document.getElementById(`sub-container-${parentCardId}`);
             if (!container) return;
@@ -923,23 +1033,26 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 7%;">الحالة</th>
+                                <th style="width: 10%;">الحالة</th>
                                 <th style="width: 18%;">اسم المريض</th>
                                 <th style="width: 6%;">العمر</th>
                                 <th style="width: 18%;">الطبيب الاختصاص</th>
-                                <th style="width: 23%;">التشخيص الطبي</th>
-                                <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                                <th style="width: 21%;">التشخيص الطبي</th>
+                                <th style="width: 22%;">الخطة العلاجية والتفاصيل</th>
                                 <th class="edit-only" style="width: 5%;"></th>
                             </tr>
                         </thead>
                         <tbody id="${tbodyId}">
                             <tr>
-                                <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
+                                <td>
+                                    <span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span>
+                                    <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                                </td>
                                 <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable cell-plan" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                             </tr>
                         </tbody>
@@ -1012,23 +1125,26 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 7%;">الحالة</th>
+                                <th style="width: 10%;">الحالة</th>
                                 <th style="width: 18%;">اسم المريض</th>
                                 <th style="width: 6%;">العمر</th>
                                 <th style="width: 18%;">الطبيب الاختصاص</th>
-                                <th style="width: 23%;">التشخيص الطبي</th>
-                                <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                                <th style="width: 21%;">التشخيص الطبي</th>
+                                <th style="width: 22%;">الخطة العلاجية والتفاصيل</th>
                                 <th class="edit-only" style="width: 5%;"></th>
                             </tr>
                         </thead>
                         <tbody id="${tbodyId}">
                             <tr>
-                                <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
+                                <td>
+                                    <span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span>
+                                    <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                                </td>
                                 <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable cell-plan" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                                 <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                             </tr>
                         </tbody>
@@ -1071,7 +1187,10 @@
 
             if(hasGCS) {
                 tr.innerHTML = `
-                    <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span></td>
+                    <td>
+                        <span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span>
+                        <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                    </td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td>
@@ -1082,17 +1201,20 @@
                     </td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                    <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable cell-plan" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                 `;
             } else {
                 tr.innerHTML = `
-                    <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span></td>
+                    <td>
+                        <span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span>
+                        <button class="btn-share-patient" onclick="openShareModal(this)"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
+                    </td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                    <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable cell-plan" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                 `;
             }
