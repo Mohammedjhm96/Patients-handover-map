@@ -834,7 +834,7 @@
 
     </div>
 
-    <!-- 🔻 كود الربط المباشر بقاعدة بيانات Firebase 🔻 -->
+    <!-- 🔻 كود الربط المباشر المعدل لمنع اختفاء الكيبورد 🔻 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -855,17 +855,16 @@
 
         let isRemoteUpdate = false;
 
-        // دالة حفظ البيانات في السيرفر المباشر
         window.saveDataToFirebase = function(data) {
             if (isRemoteUpdate) return;
             set(ref(database, 'handoverDataMap_v2'), data);
         };
 
-        // الاستماع للتعديلات القادمة من الأطباء الآخرين لتحديث الشاشة فوراً
         const handoverRef = ref(database, 'handoverDataMap_v2');
         onValue(handoverRef, (snapshot) => {
             const data = snapshot.val();
-            if (data && window.renderDataFromFirebase) {
+            // عدم تحديث الواجهة إذا كان المستخدم حالياً يكتب لتجنب إغلاق الكيبورد
+            if (data && window.renderDataFromFirebase && document.activeElement.getAttribute('contenteditable') !== 'true' && document.activeElement.tagName !== 'INPUT') {
                 isRemoteUpdate = true;
                 window.renderDataFromFirebase(data);
                 isRemoteUpdate = false;
@@ -878,6 +877,7 @@
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
         let dynamicDeptCounter = 0;
+        let saveTimeout = null;
 
         const presetColors = [
             '#0891b2', '#d97706', '#4f46e5', '#059669', '#be185d', '#854d0e', '#4338ca'
@@ -1064,28 +1064,28 @@
             saveData();
         }
 
-        /* --- حفظ البيانات محلية وفي السيرفر السحابي --- */
+        /* --- حفظ البيانات مع تأخير بسيط (Debounce) لضمان عدم اختفاء الكيبورد --- */
         function saveData() {
-            const fontSelect = document.querySelector('.font-select-control');
-            const data = {
-                selectedFont: fontSelect ? fontSelect.value : "'Cairo', sans-serif",
-                mainDay: document.getElementById('mainDaySelect').value,
-                mainDate: document.getElementById('mainDateInput').value,
-                htmlContent: document.getElementById('departmentsWrapper').innerHTML,
-                tabsContent: document.getElementById('tabsContainer').innerHTML,
-                dynamicCounter: dynamicDeptCounter
-            };
-            
-            // حفظ محلي
-            localStorage.setItem('handoverDataMap_v2', JSON.stringify(data));
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                const fontSelect = document.querySelector('.font-select-control');
+                const data = {
+                    selectedFont: fontSelect ? fontSelect.value : "'Cairo', sans-serif",
+                    mainDay: document.getElementById('mainDaySelect').value,
+                    mainDate: document.getElementById('mainDateInput').value,
+                    htmlContent: document.getElementById('departmentsWrapper').innerHTML,
+                    tabsContent: document.getElementById('tabsContainer').innerHTML,
+                    dynamicCounter: dynamicDeptCounter
+                };
+                
+                localStorage.setItem('handoverDataMap_v2', JSON.stringify(data));
 
-            // إرسال للسيرفر عبر Firebase
-            if (window.saveDataToFirebase) {
-                window.saveDataToFirebase(data);
-            }
+                if (window.saveDataToFirebase) {
+                    window.saveDataToFirebase(data);
+                }
+            }, 300);
         }
 
-        /* --- استقبال وتحديث الشاشة فور وصول تغيير من Firebase --- */
         window.renderDataFromFirebase = function(data) {
             if (!data) return;
 
