@@ -144,7 +144,7 @@
         td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; vertical-align: middle; }
 
         .cell-editable { outline: none; min-height: 22px; padding: 3px; border-radius: 4px; }
-        .cell-plan { color: #0369a1; font-weight: 600; } /* لون افتراضي ميز للخطة العلاجية */
+        .cell-plan { color: #0369a1; font-weight: 600; }
         
         .text-black { color: #000000 !important; font-weight: 600; }
         .text-darkblue { color: #1e3a8a !important; font-weight: 700; }
@@ -884,7 +884,7 @@
             });
         };
 
-        window.downloadPatientAsImage = function() {
+        window.downloadPatientAsImage = async function() {
             const data = getPatientDetailsData();
             if(!data) return;
 
@@ -905,13 +905,48 @@
                 <div style="margin-top:12px; text-align:center; font-size:10px; color:#64748b; direction:ltr;">Developed by dr. Mohammad Jasim</div>
             `;
 
-            html2canvas(renderContainer).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Patient_${data.caseNo}_${data.name || 'Report'}.png`;
-                link.href = canvas.toDataURL();
-                link.click();
-                closeShareModal();
-            });
+            try {
+                const canvas = await html2canvas(renderContainer);
+                
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        alert("حدث خطأ أثناء إنشاء الصورة.");
+                        return;
+                    }
+
+                    const fileName = `Patient_${data.caseNo}_${data.name || 'Report'}.png`;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+
+                    // 1. محاولة المشاركة المباشرة عبر تطبيقات الهاتف (WhatsApp, Telegram, etc.)
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: `تقرير حالة مريض - ${data.caseNo}`,
+                                text: `بطاقة المريض: ${data.name || data.caseNo}`
+                            });
+                            closeShareModal();
+                            return;
+                        } catch (shareErr) {
+                            // تم إلغاء المشاركة من قبل المستخدم
+                        }
+                    }
+
+                    // 2. إذا لم تكن ميزة المشاركة مدعومة، يتم فتح الصورة لتنزيلها أو حفظها بالاستوديو
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    closeShareModal();
+                }, 'image/png');
+
+            } catch (err) {
+                alert("تعذر حفظ الصورة، يرجى المحاولة مرة أخرى.");
+            }
         };
 
         function applyFormat(e, command, value = null) {
