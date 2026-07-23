@@ -117,6 +117,7 @@
         }
 
         .btn-mode { background: #0284c7; color: white; box-shadow: 0 3px 8px rgba(2, 132, 199, 0.2); }
+        .btn-lock { background: #dc2626; color: white; box-shadow: 0 3px 8px rgba(220, 38, 38, 0.2); }
         .btn-pdf { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 3px 8px rgba(16, 185, 129, 0.2); }
         .btn-reset { background: #ef4444; color: white; }
         .btn-add-dept { background: #4f46e5; color: white; }
@@ -281,9 +282,60 @@
             text-align: right; border-bottom: 2px solid #e2e8f0;
         }
 
-        td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; vertical-align: top; }
+        td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; vertical-align: middle; }
 
         .cell-editable { outline: none; min-height: 22px; padding: 3px; border-radius: 4px; }
+        
+        /* ألوان الخطوط المطلوبة */
+        .text-black { color: #000000 !important; font-weight: 600; }
+        .text-darkblue { color: #1e3a8a !important; font-weight: 700; }
+        .text-gcs-red { color: #dc2626 !important; font-weight: 800; direction: ltr; text-align: center; }
+
+        /* أسلوب عرض Glasgow Coma Scale */
+        .gcs-box {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            background: #fff5f5;
+            padding: 4px 6px;
+            border-radius: 6px;
+            border: 1px solid #fecaca;
+            font-size: 11px;
+        }
+
+        .gcs-select-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .gcs-select-group label {
+            font-weight: 700;
+            color: #991b1b;
+            font-size: 10px;
+        }
+
+        .gcs-select-group select {
+            padding: 1px 2px;
+            border-radius: 4px;
+            border: 1px solid #fca5a5;
+            font-size: 10px;
+            color: #dc2626;
+            font-weight: 700;
+            background: white;
+            outline: none;
+        }
+
+        .gcs-score-total {
+            text-align: center;
+            font-weight: 800;
+            color: #dc2626;
+            font-size: 12px;
+            border-top: 1px dashed #fca5a5;
+            padding-top: 2px;
+            margin-top: 2px;
+        }
 
         body.read-only-mode .edit-only { display: none !important; }
         
@@ -323,8 +375,35 @@
             cursor: pointer; font-size: 11px; font-weight: 700;
         }
 
+        /* الزر الدوار العائم */
+        .floating-edit-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #0284c7;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+            cursor: pointer;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            transition: transform 0.6s ease-in-out, background-color 0.3s;
+        }
+
+        .floating-edit-btn.active {
+            background: #dc2626;
+            transform: rotate(360deg);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+
         @media print {
-            #authModal, .controls-card, .dept-tabs, .action-element, .edit-only { display: none !important; }
+            #authModal, .controls-card, .dept-tabs, .action-element, .edit-only, .floating-edit-btn { display: none !important; }
             body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #pdf-content { box-shadow: none; padding: 0; border: none; width: 100%; max-width: 100%; }
             @page { size: A4 portrait; margin: 8mm; }
@@ -332,6 +411,11 @@
     </style>
 </head>
 <body class="read-only-mode">
+
+    <!-- الزر العائم للتعديل وإغلاق التعديل -->
+    <button class="floating-edit-btn" id="floatingEditBtn" onclick="toggleEditModeFloating()" title="وضع التعديل / قفل">
+        <i class="fa-solid fa-lock" id="floatingIcon"></i>
+    </button>
 
     <div id="authModal">
         <div class="auth-card">
@@ -351,6 +435,9 @@
         <div class="tool-group">
             <button class="btn btn-mode" id="toggleEditBtn" onclick="openAuthModal()">
                 <i class="fa-solid fa-lock"></i> وضع التعديل (للأطباء)
+            </button>
+            <button class="btn btn-lock edit-only" onclick="setEditMode(false)">
+                <i class="fa-solid fa-lock"></i> إغلاق التعديل
             </button>
             <button class="btn btn-pdf" onclick="generatePDF()">
                 <i class="fa-solid fa-print"></i> طباعة / حفظ (PDF)
@@ -453,7 +540,7 @@
                             <input type="color" onchange="changeDeptColor('card-men', this.value)">
                         </label>
                         <button class="btn btn-add-subdept" onclick="addSubDepartment('card-men')">+ قسم فرعي</button>
-                        <button class="btn btn-add-patient" onclick="addRow('men-tbody')">+ حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('men-tbody', false)">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -482,27 +569,98 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 10%;">الحالة</th>
-                            <th style="width: 20%;">اسم المريض والعمر</th>
-                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 18%;">اسم المريض</th>
+                            <th style="width: 7%;">العمر</th>
+                            <th style="width: 17%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="men-tbody">
-                        <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
-                        </tr>
                     </tbody>
                 </table>
 
-                <div class="sub-dept-container" id="sub-container-card-men"></div>
+                <div class="sub-dept-container" id="sub-container-card-men">
+                    <!-- القسم الفرعي الافتراضي: ردهة الجراحة العصبية -->
+                    <div class="sub-dept-card" id="sub-neurosurg">
+                        <div class="sub-dept-banner" id="sub-banner-sub-neurosurg" style="background-color: #831843;">
+                            <div style="display:flex; align-items:center; gap:6px; flex:1;">
+                                <i class="fa-solid fa-brain"></i>
+                                <input type="text" class="sub-dept-title-editable" value="ردهة الجراحة العصبية" oninput="saveData()" />
+                            </div>
+                            <div class="dept-actions edit-only">
+                                <label class="change-color-btn">
+                                    <i class="fa-solid fa-palette"></i> لون
+                                    <input type="color" value="#831843" onchange="changeSubDeptColor('sub-neurosurg', this.value)">
+                                </label>
+                                <button class="btn btn-add-patient" onclick="addRow('sub-neurosurg-tbody', true)">+ حالة</button>
+                                <button class="delete-dept-btn" onclick="removeSubDepartment('sub-neurosurg')"><i class="fa-solid fa-trash"></i> حذف</button>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 7%;">الحالة</th>
+                                    <th style="width: 16%;">اسم المريض</th>
+                                    <th style="width: 6%;">العمر</th>
+                                    <th style="width: 18%;">مقياس الوعي (GCS)</th>
+                                    <th style="width: 15%;">الطبيب الاختصاص</th>
+                                    <th style="width: 18%;">التشخيص الطبي</th>
+                                    <th style="width: 15%;">الخطة العلاجية والتفاصيل</th>
+                                    <th class="edit-only" style="width: 5%;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="sub-neurosurg-tbody">
+                                <tr>
+                                    <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                                    <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">خالد مروان</div></td>
+                                    <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">45</div></td>
+                                    <td>
+                                        <div class="gcs-box">
+                                            <div class="gcs-select-group">
+                                                <label>Eye (E):</label>
+                                                <select onchange="calculateGCS(this); saveData();">
+                                                    <option value="4">4 - Spontaneous</option>
+                                                    <option value="3">3 - To sound</option>
+                                                    <option value="2">2 - To pressure</option>
+                                                    <option value="1">1 - None</option>
+                                                </select>
+                                            </div>
+                                            <div class="gcs-select-group">
+                                                <label>Verbal (V):</label>
+                                                <select onchange="calculateGCS(this); saveData();">
+                                                    <option value="5">5 - Oriented</option>
+                                                    <option value="4">4 - Confused</option>
+                                                    <option value="3">3 - Words</option>
+                                                    <option value="2">2 - Sounds</option>
+                                                    <option value="1">1 - None</option>
+                                                </select>
+                                            </div>
+                                            <div class="gcs-select-group">
+                                                <label>Motor (M):</label>
+                                                <select onchange="calculateGCS(this); saveData();">
+                                                    <option value="6">6 - Obeys commands</option>
+                                                    <option value="5">5 - Localising</option>
+                                                    <option value="4">4 - Normal flexion</option>
+                                                    <option value="3">3 - Abnormal flexion</option>
+                                                    <option value="2">2 - Extension</option>
+                                                    <option value="1">1 - None</option>
+                                                </select>
+                                            </div>
+                                            <div class="gcs-score-total">GCS: <span class="gcs-total-val text-gcs-red">15/15</span></div>
+                                        </div>
+                                    </td>
+                                    <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">د. ممدوح مصلح</div></td>
+                                    <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">Head Trauma</div></td>
+                                    <td><div class="cell-editable" contenteditable="false" oninput="saveData()">CT Scan Done</div></td>
+                                    <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- 2. ردهة النساء -->
@@ -518,7 +676,7 @@
                             <input type="color" onchange="changeDeptColor('card-women', this.value)">
                         </label>
                         <button class="btn btn-add-subdept" onclick="addSubDepartment('card-women')">+ قسم فرعي</button>
-                        <button class="btn btn-add-patient" onclick="addRow('women-tbody')">+ حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('women-tbody', false)">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -546,20 +704,22 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 10%;">الحالة</th>
-                            <th style="width: 20%;">اسم المريضة والعمر</th>
-                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 18%;">اسم المريضة</th>
+                            <th style="width: 7%;">العمر</th>
+                            <th style="width: 17%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="women-tbody">
                         <tr>
                             <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
@@ -581,7 +741,7 @@
                             <input type="color" onchange="changeDeptColor('card-med-icu', this.value)">
                         </label>
                         <button class="btn btn-add-subdept" onclick="addSubDepartment('card-med-icu')">+ قسم فرعي</button>
-                        <button class="btn btn-add-patient" onclick="addRow('med-icu-tbody')">+ حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('med-icu-tbody', false)">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -609,20 +769,22 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 10%;">الحالة</th>
-                            <th style="width: 20%;">اسم المريض والعمر</th>
-                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 18%;">اسم المريض</th>
+                            <th style="width: 7%;">العمر</th>
+                            <th style="width: 17%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="med-icu-tbody">
                         <tr>
                             <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">سالم علي</div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">د. خالد العرجان</div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">IHD<br>DM, St elevation<br>in lead v1-v3</div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">سالم علي</div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">62</div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">د. خالد العرجان</div></td>
+                            <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">IHD<br>DM, St elevation<br>in lead v1-v3</div></td>
                             <td><div class="cell-editable" contenteditable="false" oninput="saveData()">عمل ايكو غداً صباحاً</div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
@@ -644,7 +806,7 @@
                             <input type="color" onchange="changeDeptColor('card-surg-icu', this.value)">
                         </label>
                         <button class="btn btn-add-subdept" onclick="addSubDepartment('card-surg-icu')">+ قسم فرعي</button>
-                        <button class="btn btn-add-patient" onclick="addRow('surg-icu-tbody')">+ حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('surg-icu-tbody', false)">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -672,20 +834,22 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 10%;">الحالة</th>
-                            <th style="width: 20%;">اسم المريض والعمر</th>
-                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 18%;">اسم المريض</th>
+                            <th style="width: 7%;">العمر</th>
+                            <th style="width: 17%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="surg-icu-tbody">
                         <tr>
                             <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()"></div></td>
                             <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
@@ -770,23 +934,39 @@
             }
         }
 
+        function toggleEditModeFloating() {
+            if (window.isEditMode) {
+                setEditMode(false);
+            } else {
+                openAuthModal();
+            }
+        }
+
         function setEditMode(enable) {
             window.isEditMode = enable;
             const btn = document.getElementById('toggleEditBtn');
+            const floatBtn = document.getElementById('floatingEditBtn');
+            const floatIcon = document.getElementById('floatingIcon');
 
             if (enable) {
                 document.body.classList.remove('read-only-mode');
                 document.body.classList.add('edit-mode-active');
-                btn.innerHTML = `<i class="fa-solid fa-lock-open"></i> قفل التعديل (مُفعل الآن)`;
+                btn.innerHTML = `<i class="fa-solid fa-lock-open"></i> وضع التعديل (مُفعل الآن)`;
                 btn.style.background = "#16a34a";
                 
+                floatBtn.classList.add('active');
+                floatIcon.className = "fa-solid fa-lock-open";
+
                 document.querySelectorAll('.cell-editable').forEach(cell => cell.setAttribute('contenteditable', 'true'));
             } else {
                 document.body.classList.add('read-only-mode');
                 document.body.classList.remove('edit-mode-active');
                 btn.innerHTML = `<i class="fa-solid fa-lock"></i> وضع التعديل (للأطباء)`;
                 btn.style.background = "#0284c7";
-                
+
+                floatBtn.classList.remove('active');
+                floatIcon.className = "fa-solid fa-lock";
+
                 document.querySelectorAll('.cell-editable').forEach(cell => cell.setAttribute('contenteditable', 'false'));
             }
         }
@@ -824,6 +1004,16 @@
         function updateTabTitle(cardId, newTitle) {
             const label = document.getElementById(`label-${cardId}`);
             if(label) label.innerText = newTitle || 'قسم بدون عنوان';
+        }
+
+        function calculateGCS(elem) {
+            const box = elem.closest('.gcs-box');
+            if(!box) return;
+            const selects = box.querySelectorAll('select');
+            let total = 0;
+            selects.forEach(s => total += parseInt(s.value || 0));
+            const display = box.querySelector('.gcs-total-val');
+            if(display) display.innerText = `${total}/15`;
         }
 
         let savedRange = null;
@@ -905,7 +1095,7 @@
                             <input type="color" value="${autoColor}" onchange="changeDeptColor('${cardId}', this.value)">
                         </label>
                         <button class="btn btn-add-subdept" onclick="addSubDepartment('${cardId}')">+ قسم فرعي</button>
-                        <button class="btn btn-add-patient" onclick="addRow('${tbodyId}')">+ حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('${tbodyId}', false)">+ حالة</button>
                         <button class="delete-dept-btn" onclick="removeDepartment('${cardId}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 </div>
@@ -934,20 +1124,22 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 10%;">الحالة</th>
-                            <th style="width: 20%;">اسم المريض والعمر</th>
-                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 18%;">اسم المريض</th>
+                            <th style="width: 7%;">العمر</th>
+                            <th style="width: 17%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="${tbodyId}">
                         <tr>
                             <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                             <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
@@ -989,27 +1181,29 @@
                             <i class="fa-solid fa-palette"></i> لون
                             <input type="color" value="#475569" onchange="changeSubDeptColor('${subId}', this.value)">
                         </label>
-                        <button class="btn btn-add-patient" onclick="addRow('${subTbodyId}')">+ حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('${subTbodyId}', false)">+ حالة</button>
                         <button class="delete-dept-btn" onclick="removeSubDepartment('${subId}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 </div>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 10%;">الحالة</th>
-                            <th style="width: 20%;">اسم المريض والعمر</th>
-                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 18%;">اسم المريض</th>
+                            <th style="width: 7%;">العمر</th>
+                            <th style="width: 17%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
+                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="${subTbodyId}">
                         <tr>
                             <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                             <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
@@ -1040,20 +1234,69 @@
             }
         }
 
-        function addRow(tbodyId) {
+        function addRow(tbodyId, isGCS = false) {
             const tbody = document.getElementById(tbodyId);
             if(!tbody) return;
             const count = tbody.children.length + 1;
             const isEditable = window.isEditMode ? 'true' : 'false';
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span></td>
-                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
-            `;
+
+            if (isGCS) {
+                tr.innerHTML = `
+                    <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span></td>
+                    <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td>
+                        <div class="gcs-box">
+                            <div class="gcs-select-group">
+                                <label>Eye (E):</label>
+                                <select onchange="calculateGCS(this); saveData();">
+                                    <option value="4">4 - Spontaneous</option>
+                                    <option value="3">3 - To sound</option>
+                                    <option value="2">2 - To pressure</option>
+                                    <option value="1">1 - None</option>
+                                </select>
+                            </div>
+                            <div class="gcs-select-group">
+                                <label>Verbal (V):</label>
+                                <select onchange="calculateGCS(this); saveData();">
+                                    <option value="5">5 - Oriented</option>
+                                    <option value="4">4 - Confused</option>
+                                    <option value="3">3 - Words</option>
+                                    <option value="2">2 - Sounds</option>
+                                    <option value="1">1 - None</option>
+                                </select>
+                            </div>
+                            <div class="gcs-select-group">
+                                <label>Motor (M):</label>
+                                <select onchange="calculateGCS(this); saveData();">
+                                    <option value="6">6 - Obeys commands</option>
+                                    <option value="5">5 - Localising</option>
+                                    <option value="4">4 - Normal flexion</option>
+                                    <option value="3">3 - Abnormal flexion</option>
+                                    <option value="2">2 - Extension</option>
+                                    <option value="1">1 - None</option>
+                                </select>
+                            </div>
+                            <div class="gcs-score-total">GCS: <span class="gcs-total-val text-gcs-red">15/15</span></div>
+                        </div>
+                    </td>
+                    <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                `;
+            } else {
+                tr.innerHTML = `
+                    <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span></td>
+                    <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                    <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                `;
+            }
             tbody.appendChild(tr);
             saveData();
         }
