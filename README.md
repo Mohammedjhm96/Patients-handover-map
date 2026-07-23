@@ -834,47 +834,73 @@
 
     </div>
 
+    <!-- 🔻 كود الربط المباشر بقاعدة بيانات Firebase 🔻 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB09HCMKQctnh1gjMb-qR7jeSPsffkFCu8",
+            authDomain: "hospital-patients-handover-map.firebaseapp.com",
+            databaseURL: "https://hospital-patients-handover-map-default-rtdb.firebaseio.com",
+            projectId: "hospital-patients-handover-map",
+            storageBucket: "hospital-patients-handover-map.firebasestorage.app",
+            messagingSenderId: "861626853040",
+            appId: "1:861626853040:web:03fd42ad26a5d4e45cfd75",
+            measurementId: "G-17F9MX1RNR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        let isRemoteUpdate = false;
+
+        // دالة حفظ البيانات في السيرفر المباشر
+        window.saveDataToFirebase = function(data) {
+            if (isRemoteUpdate) return;
+            set(ref(database, 'handoverDataMap_v2'), data);
+        };
+
+        // الاستماع للتعديلات القادمة من الأطباء الآخرين لتحديث الشاشة فوراً
+        const handoverRef = ref(database, 'handoverDataMap_v2');
+        onValue(handoverRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data && window.renderDataFromFirebase) {
+                isRemoteUpdate = true;
+                window.renderDataFromFirebase(data);
+                isRemoteUpdate = false;
+            }
+        });
+    </script>
+
     <script>
         document.getElementById('appLiveUrl').href = window.location.href;
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
         let dynamicDeptCounter = 0;
 
-        // قائمة ألوان زاهية ومختلفة تلقائية للأقسام الجديدة
         const presetColors = [
-            '#0891b2', // أزرق سيان
-            '#d97706', // برتقالي
-            '#4f46e5', // نيلي
-            '#059669', // زمردي
-            '#be185d', // وردي غامق
-            '#854d0e', // بني
-            '#4338ca'  // بنفسجي غامق
+            '#0891b2', '#d97706', '#4f46e5', '#059669', '#be185d', '#854d0e', '#4338ca'
         ];
 
-        /* --- تغيير الخط --- */
         function changeFontFamily(font) {
             document.documentElement.style.setProperty('--main-font', font);
             saveData();
         }
 
-        /* --- تغيير لون القسم والزر الخاص به --- */
         function changeDeptColor(cardId, color) {
             const banner = document.getElementById(`banner-${cardId}`);
             const tabBtn = document.getElementById(`tab-btn-${cardId}`);
-            
             if(banner) banner.style.backgroundColor = color;
             if(tabBtn) tabBtn.style.backgroundColor = color;
-
             saveData();
         }
 
-        /* --- تحديث عنوان الأزرار العلوية (Tabs) عند تعديل اسم القسم --- */
         function updateTabTitle(cardId, newTitle) {
             const label = document.getElementById(`label-${cardId}`);
             if(label) label.innerText = newTitle || 'قسم بدون عنوان';
         }
 
-        /* --- حفظ واسترجاع التحديد للخط والنص --- */
         let savedRange = null;
         function restoreSelection() {
             if (savedRange) {
@@ -905,7 +931,6 @@
             saveData();
         }
 
-        /* --- التبديل بين الأقسام (Tabs) --- */
         function showTab(targetCardId, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -920,18 +945,14 @@
             });
         }
 
-        /* --- إضافة قسم جديد بألوان مميزة وتعديل شامل --- */
         function addNewDepartment() {
             dynamicDeptCounter++;
             const cardId = `card-custom-${dynamicDeptCounter}`;
             const tbodyId = `custom-tbody-${dynamicDeptCounter}`;
             const deptName = `قسم جديد ${dynamicDeptCounter}`;
             const todayStr = new Date().toISOString().split('T')[0];
-
-            // اختيار لون تلقائي مميز ومختلف
             const autoColor = presetColors[(dynamicDeptCounter - 1) % presetColors.length];
 
-            // 1. إضافة الزر العلوي للتنقل (Tab)
             const tabsContainer = document.getElementById('tabsContainer');
             const tabBtn = document.createElement('button');
             tabBtn.className = 'tab-btn';
@@ -941,7 +962,6 @@
             tabBtn.innerHTML = `<i class="fa-solid fa-hospital-user"></i> <span id="label-${cardId}">${deptName}</span>`;
             tabsContainer.appendChild(tabBtn);
 
-            // 2. إنشاء كارت القسم الجديد
             const wrapper = document.getElementById('departmentsWrapper');
             const card = document.createElement('div');
             card.className = 'dept-card';
@@ -1044,7 +1064,7 @@
             saveData();
         }
 
-        /* --- حفظ واسترجاع البيانات عبر LocalStorage --- */
+        /* --- حفظ البيانات محلية وفي السيرفر السحابي --- */
         function saveData() {
             const fontSelect = document.querySelector('.font-select-control');
             const data = {
@@ -1055,29 +1075,40 @@
                 tabsContent: document.getElementById('tabsContainer').innerHTML,
                 dynamicCounter: dynamicDeptCounter
             };
+            
+            // حفظ محلي
             localStorage.setItem('handoverDataMap_v2', JSON.stringify(data));
+
+            // إرسال للسيرفر عبر Firebase
+            if (window.saveDataToFirebase) {
+                window.saveDataToFirebase(data);
+            }
         }
+
+        /* --- استقبال وتحديث الشاشة فور وصول تغيير من Firebase --- */
+        window.renderDataFromFirebase = function(data) {
+            if (!data) return;
+
+            if(data.selectedFont) {
+                const fontSelect = document.querySelector('.font-select-control');
+                if(fontSelect) fontSelect.value = data.selectedFont;
+                document.documentElement.style.setProperty('--main-font', data.selectedFont);
+            }
+
+            if(data.mainDay) document.getElementById('mainDaySelect').value = data.mainDay;
+            if(data.mainDate) document.getElementById('mainDateInput').value = data.mainDate;
+
+            if(data.htmlContent) document.getElementById('departmentsWrapper').innerHTML = data.htmlContent;
+            if(data.tabsContent) document.getElementById('tabsContainer').innerHTML = data.tabsContent;
+            if(data.dynamicCounter) dynamicDeptCounter = data.dynamicCounter;
+        };
 
         function loadData() {
             const saved = localStorage.getItem('handoverDataMap_v2');
             const todayStr = new Date().toISOString().split('T')[0];
 
             if (saved) {
-                const data = JSON.parse(saved);
-                
-                if(data.selectedFont) {
-                    const fontSelect = document.querySelector('.font-select-control');
-                    if(fontSelect) fontSelect.value = data.selectedFont;
-                    changeFontFamily(data.selectedFont);
-                }
-
-                if(data.mainDay) document.getElementById('mainDaySelect').value = data.mainDay;
-                if(data.mainDate) document.getElementById('mainDateInput').value = data.mainDate;
-
-                if(data.htmlContent) document.getElementById('departmentsWrapper').innerHTML = data.htmlContent;
-                if(data.tabsContent) document.getElementById('tabsContainer').innerHTML = data.tabsContent;
-                if(data.dynamicCounter) dynamicDeptCounter = data.dynamicCounter;
-
+                renderDataFromFirebase(JSON.parse(saved));
             } else {
                 document.getElementById('mainDateInput').value = todayStr;
                 document.getElementById('date-men').value = todayStr;
@@ -1090,6 +1121,7 @@
         function clearData() {
             if (confirm('هل أنت متأكد من مسح جميع البيانات المدخلة والبدء من جديد؟')) {
                 localStorage.removeItem('handoverDataMap_v2');
+                if(window.saveDataToFirebase) window.saveDataToFirebase({});
                 location.reload();
             }
         }
