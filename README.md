@@ -917,7 +917,6 @@
                     const fileName = `Patient_${data.caseNo}_${data.name || 'Report'}.png`;
                     const file = new File([blob], fileName, { type: 'image/png' });
 
-                    // 1. محاولة المشاركة المباشرة عبر تطبيقات الهاتف (WhatsApp, Telegram, etc.)
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         try {
                             await navigator.share({
@@ -932,7 +931,6 @@
                         }
                     }
 
-                    // 2. إذا لم تكن ميزة المشاركة مدعومة، يتم فتح الصورة لتنزيلها أو حفظها بالاستوديو
                     const blobUrl = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = blobUrl;
@@ -1341,11 +1339,36 @@
             }
         }
 
+        /* دالة تصفير البيانات المحدثة: تقوم بتفريغ البيانات والمدخلات فقط دون مسح الأقسام الرئيسية والفرعية */
         function clearData() {
-            if (confirm('هل أنت متأكد من مسح جميع البيانات والبدء من جديد؟')) {
-                localStorage.removeItem('handoverDataMap_v2');
-                if(window.saveDataToFirebase) window.saveDataToFirebase({});
-                location.reload();
+            if (confirm('هل أنت متأكد من تصفير جميع مدخلات المرضى والأطباء مع الحفاظ على كافة الأقسام الرئيسية والفرعية؟')) {
+                const wrapper = document.getElementById('departmentsWrapper');
+                if (!wrapper) return;
+
+                // 1. تفريغ قيم جميع الخلايا (اسم المريض، العمر، الاختصاص، التشخيص، الخطة) مع الاستثناء لـ Bed Badge
+                wrapper.querySelectorAll('.cell-editable').forEach(cell => {
+                    if (!cell.classList.contains('bed-badge')) {
+                        cell.innerHTML = '';
+                    }
+                });
+
+                // 2. تفريغ مدخلات الأطباء والهواتف في ترويسات الأقسام الفرعية والرئيسية
+                wrapper.querySelectorAll('.dept-sub-header input').forEach(input => {
+                    input.value = '';
+                    input.setAttribute('value', '');
+                });
+
+                // 3. إرجاع مقياس GCS في كل الأقسام إلى القيمة الافتراضية 15/15
+                wrapper.querySelectorAll('.gcs-compact-badge').forEach(badge => {
+                    badge.setAttribute('data-e', '4');
+                    badge.setAttribute('data-v', '5');
+                    badge.setAttribute('data-m', '6');
+                    const valSpan = badge.querySelector('.gcs-val');
+                    if (valSpan) valSpan.innerText = '15/15';
+                });
+
+                // 4. حفظ الحالة المعطل منها البيانات مباشرة في التخزين المحلي وفي Firebase
+                saveData();
             }
         }
 
