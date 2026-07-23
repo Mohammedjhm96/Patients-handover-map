@@ -1228,7 +1228,7 @@
             saveData();
         }
 
-        /* دالة إضافة قسم فرعي جديد */
+        /* دالة إضافة قسم فرعي جديد لكل الأقسام الرئيسية والفرعية */
         function addSubDepartment(parentCardId) {
             dynamicSubDeptCounter++;
             let container = document.getElementById(`sub-container-${parentCardId}`);
@@ -1333,11 +1333,39 @@
             saveData();
         }
 
+        /* 🌟 دالة تحديث قيم الحقول داخل عناصر الـ HTML لضمان مزامنتها مع Firebase 🌟 */
+        function updateInputAttributes() {
+            const wrapper = document.getElementById('departmentsWrapper');
+            if (!wrapper) return;
+            
+            // مزامنة مدخلات النصوص
+            wrapper.querySelectorAll('input').forEach(input => {
+                if (input.type !== 'file' && input.type !== 'button') {
+                    input.setAttribute('value', input.value);
+                }
+            });
+
+            // مزامنة القوائم المنسدلة Select
+            wrapper.querySelectorAll('select').forEach(select => {
+                const val = select.value;
+                select.querySelectorAll('option').forEach(opt => {
+                    if (opt.value === val || opt.text === val) {
+                        opt.setAttribute('selected', 'selected');
+                    } else {
+                        opt.removeAttribute('selected');
+                    }
+                });
+            });
+        }
+
         function saveData() {
             if (!window.isEditMode) return;
             
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
+                // تحديث سمات الحقول قبل استخراج innerHTML
+                updateInputAttributes();
+
                 const fontSelect = document.querySelector('.font-select-control');
                 const data = {
                     selectedFont: fontSelect ? fontSelect.value : "'Cairo', sans-serif",
@@ -1374,7 +1402,7 @@
             if(data.dynamicCounter) dynamicDeptCounter = data.dynamicCounter;
             if(data.dynamicSubCounter) dynamicSubDeptCounter = data.dynamicSubCounter;
 
-            // إعادة تطبيـق الحماية للحقول
+            // إعادة تطبيـق الحماية للحقول وتفعيل التعديل حسب الوضع الحالي
             setEditMode(window.isEditMode);
         };
 
