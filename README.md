@@ -895,6 +895,173 @@
             });
         }
 
+        /* --- إضافة قسم فرعي وقسم رئيسي والدوال الخاصة بها --- */
+        window.addSubDepartment = function(parentCardId) {
+            const container = document.getElementById(`sub-container-${parentCardId}`);
+            if (!container) return;
+
+            const subId = 'sub-' + Date.now();
+            const tbodyId = `${subId}-tbody`;
+            const isEditable = window.isEditMode ? 'true' : 'false';
+
+            const subDeptHTML = `
+                <div class="sub-dept-card" id="${subId}">
+                    <div class="sub-dept-banner" id="sub-banner-${subId}" style="background-color: #475569;">
+                        <div style="display:flex; align-items:center; gap:6px; flex:1;">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <input type="text" class="sub-dept-title-editable" value="قسم فرعي جديد" oninput="saveData()" />
+                        </div>
+                        <div class="dept-actions edit-only">
+                            <label class="change-color-btn">
+                                <i class="fa-solid fa-palette"></i> لون
+                                <input type="color" value="#475569" onchange="changeSubDeptColor('${subId}', this.value)">
+                            </label>
+                            <button class="btn btn-add-patient" onclick="addRow('${tbodyId}', false)">+ حالة</button>
+                            <button class="delete-dept-btn" onclick="removeSubDepartment('${subId}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 7%;">الحالة</th>
+                                <th style="width: 18%;">اسم المريض</th>
+                                <th style="width: 6%;">العمر</th>
+                                <th style="width: 18%;">الطبيب الاختصاص</th>
+                                <th style="width: 23%;">التشخيص الطبي</th>
+                                <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                                <th class="edit-only" style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="${tbodyId}">
+                            <tr>
+                                <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
+                                <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', subDeptHTML);
+            setEditMode(window.isEditMode);
+            saveData();
+        };
+
+        window.removeSubDepartment = function(subId) {
+            if (confirm('هل أنت متأكد من حذف هذا القسم الفرعي بالكامل؟')) {
+                const el = document.getElementById(subId);
+                if (el) el.remove();
+                saveData();
+            }
+        };
+
+        window.addNewDepartment = function() {
+            const wrapper = document.getElementById('departmentsWrapper');
+            const tabsContainer = document.getElementById('tabsContainer');
+            if (!wrapper) return;
+
+            const deptId = 'card-custom-' + Date.now();
+            const tbodyId = `${deptId}-tbody`;
+            const subContainerId = `sub-container-${deptId}`;
+            const isEditable = window.isEditMode ? 'true' : 'false';
+
+            const deptHTML = `
+                <div class="dept-card" id="${deptId}">
+                    <div class="dept-banner" id="banner-${deptId}" style="background-color: #0284c7;">
+                        <div class="dept-title">
+                            <i class="fa-solid fa-hospital-user"></i>
+                            <input type="text" class="dept-title-editable" value="قسم رئيسي جديد" oninput="updateTabTitle('${deptId}', this.value); saveData();" />
+                        </div>
+                        <div class="dept-actions edit-only">
+                            <label class="change-color-btn">
+                                <i class="fa-solid fa-palette"></i> لون
+                                <input type="color" value="#0284c7" onchange="changeDeptColor('${deptId}', this.value)">
+                            </label>
+                            <button class="btn btn-add-subdept" onclick="addSubDepartment('${deptId}')">+ قسم فرعي</button>
+                            <button class="btn btn-add-patient" onclick="addRow('${tbodyId}', false)">+ حالة</button>
+                            <button class="delete-dept-btn" onclick="removeDepartment('${deptId}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                        </div>
+                    </div>
+                    <div class="dept-sub-header">
+                        <div class="dept-sub-field" style="flex:1;">
+                            <i class="fa-solid fa-user-doctor"></i>
+                            <span>تسليم إلى:</span>
+                            <input type="text" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:200px;">
+                        </div>
+                        <div class="dept-sub-field">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>الهاتف:</span>
+                            <input type="tel" placeholder="رقم الهاتف" oninput="saveData()" style="width:120px;">
+                        </div>
+                        <div class="dept-sub-field">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <select onchange="saveData()">
+                                <option>السبت</option><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
+                            </select>
+                        </div>
+                        <div class="dept-sub-field">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <input type="date" onchange="saveData()">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 7%;">الحالة</th>
+                                <th style="width: 18%;">اسم المريض</th>
+                                <th style="width: 6%;">العمر</th>
+                                <th style="width: 18%;">الطبيب الاختصاص</th>
+                                <th style="width: 23%;">التشخيص الطبي</th>
+                                <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
+                                <th class="edit-only" style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="${tbodyId}">
+                            <tr>
+                                <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
+                                <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                                <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="sub-dept-container" id="${subContainerId}"></div>
+                </div>
+            `;
+
+            wrapper.insertAdjacentHTML('beforeend', deptHTML);
+
+            if (tabsContainer) {
+                const tabBtnHTML = `
+                    <button class="tab-btn" id="tab-btn-${deptId}" style="background-color: #0284c7;" onclick="showTab('${deptId}', this)">
+                        <i class="fa-solid fa-hospital-user"></i> <span id="label-${deptId}">قسم رئيسي جديد</span>
+                    </button>
+                `;
+                tabsContainer.insertAdjacentHTML('beforeend', tabBtnHTML);
+            }
+
+            setEditMode(window.isEditMode);
+            saveData();
+        };
+
+        window.removeDepartment = function(deptId) {
+            if (confirm('هل أنت متأكد من حذف هذا القسم الرئيسي بجميع أقسامه الفرعية وحالاته؟')) {
+                const deptEl = document.getElementById(deptId);
+                const tabEl = document.getElementById(`tab-btn-${deptId}`);
+                if (deptEl) deptEl.remove();
+                if (tabEl) tabEl.remove();
+                saveData();
+            }
+        };
+
         function addRow(tbodyId, hasGCS = false) {
             const tbody = document.getElementById(tbodyId);
             if(!tbody) return;
