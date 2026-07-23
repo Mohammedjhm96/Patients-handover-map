@@ -458,7 +458,7 @@
         .sub-dept-card {
             margin-top: 10px;
             margin-bottom: 15px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
             overflow: hidden;
             background: #ffffff;
@@ -467,7 +467,7 @@
         .sub-dept-banner {
             background-color: #475569;
             color: white;
-            padding: 5px 12px;
+            padding: 6px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -1010,7 +1010,6 @@
     </script>
 
     <script>
-        // 🔑 كلمة المرور الخاصة بالتعديل
         const APP_PASSWORD = "1020";
         window.isEditMode = false;
 
@@ -1228,7 +1227,7 @@
             saveData();
         }
 
-        /* دالة إضافة قسم فرعي جديد لكل الأقسام الرئيسية والفرعية */
+        /* دالة إضافة قسم فرعي جديد */
         function addSubDepartment(parentCardId) {
             dynamicSubDeptCounter++;
             let container = document.getElementById(`sub-container-${parentCardId}`);
@@ -1333,12 +1332,12 @@
             saveData();
         }
 
-        /* 🌟 دالة تحديث قيم الحقول داخل عناصر الـ HTML لضمان مزامنتها مع Firebase 🌟 */
+        /* 🌟 دالة تحديث قيم الحقول لضمان الحفظ والمزامنة مع Firebase 🌟 */
         function updateInputAttributes() {
             const wrapper = document.getElementById('departmentsWrapper');
             if (!wrapper) return;
             
-            // مزامنة مدخلات النصوص
+            // مزامنة مدخلات النصوص والأرقام
             wrapper.querySelectorAll('input').forEach(input => {
                 if (input.type !== 'file' && input.type !== 'button') {
                     input.setAttribute('value', input.value);
@@ -1363,7 +1362,7 @@
             
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
-                // تحديث سمات الحقول قبل استخراج innerHTML
+                // تحديث سمات الحقول قبل استخراج HTML
                 updateInputAttributes();
 
                 const fontSelect = document.querySelector('.font-select-control');
@@ -1402,7 +1401,7 @@
             if(data.dynamicCounter) dynamicDeptCounter = data.dynamicCounter;
             if(data.dynamicSubCounter) dynamicSubDeptCounter = data.dynamicSubCounter;
 
-            // إعادة تطبيـق الحماية للحقول وتفعيل التعديل حسب الوضع الحالي
+            // إعادة ضبط وضع التعديل والحماية
             setEditMode(window.isEditMode);
         };
 
