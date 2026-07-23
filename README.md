@@ -34,7 +34,88 @@
             color: #1e293b;
         }
 
-        /* شريط التنسيق والتحكم العلوي */
+        /* النافذة المنبثقة لإدخال كلمة المرور */
+        #authModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 360px;
+            width: 100%;
+        }
+
+        .auth-card i {
+            font-size: 40px;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .auth-card h3 {
+            margin: 0 0 8px 0;
+            color: #0f172a;
+            font-size: 17px;
+        }
+
+        .auth-card p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 10px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            text-align: center;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .auth-card .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .auth-card button {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .btn-confirm { background: #2563eb; color: white; }
+        .btn-cancel { background: #e2e8f0; color: #475569; }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+            display: none;
+        }
+
+        /* شريط التحكم والتنسيق */
         .controls-card {
             max-width: 1150px;
             margin: 0 auto 15px auto;
@@ -79,6 +160,12 @@
             transition: all 0.2s ease;
         }
 
+        .btn-mode {
+            background: #0284c7;
+            color: white;
+            box-shadow: 0 3px 8px rgba(2, 132, 199, 0.2);
+        }
+
         .btn-pdf {
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
@@ -88,13 +175,11 @@
         .btn-reset {
             background: #ef4444;
             color: white;
-            box-shadow: 0 3px 8px rgba(239, 68, 68, 0.2);
         }
 
         .btn-add-dept {
-            background: #0284c7;
+            background: #4f46e5;
             color: white;
-            box-shadow: 0 3px 8px rgba(2, 132, 199, 0.2);
         }
 
         .btn-fmt {
@@ -124,16 +209,14 @@
         }
 
         .color-dot {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             cursor: pointer;
-            transition: transform 0.2s;
             display: inline-block;
         }
-        .color-dot:hover { transform: scale(1.15); }
 
         /* أزرار اختيار الأقسام (Tabs) */
         .dept-tabs {
@@ -201,7 +284,6 @@
             padding: 6px 24px;
             border-radius: 8px;
             border: 1px solid #d4a359;
-            letter-spacing: 0.5px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
 
@@ -307,11 +389,6 @@
             outline: none;
         }
 
-        .dept-title-editable:hover, .dept-title-editable:focus {
-            border-color: rgba(255,255,255,0.6);
-            background: rgba(0, 0, 0, 0.15);
-        }
-
         .dept-actions {
             display: flex;
             align-items: center;
@@ -327,24 +404,12 @@
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
             position: relative;
-        }
-
-        .change-color-btn:hover {
-            background: rgba(255, 255, 255, 0.35);
         }
 
         .change-color-btn input[type="color"] {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
+            top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
         }
 
         .dept-sub-header {
@@ -407,7 +472,24 @@
             border-radius: 4px;
         }
 
-        .cell-editable:focus {
+        /* حالة العرض فقط (الافتراضية للزائر) */
+        body.read-only-mode .edit-only {
+            display: none !important;
+        }
+        
+        body.read-only-mode input, 
+        body.read-only-mode select {
+            pointer-events: none;
+            border-color: transparent !important;
+            background: transparent !important;
+        }
+
+        body.read-only-mode .cell-editable {
+            pointer-events: none;
+        }
+
+        /* عند تفعيل وضع التعديل */
+        body.edit-mode-active .cell-editable:focus {
             background-color: #fef9c3;
             box-shadow: inset 0 0 0 1px #fde047;
         }
@@ -429,7 +511,6 @@
             border: 1.5px solid #cbd5e1;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
         .footer-banner-box .footer-title {
@@ -444,7 +525,6 @@
             font-weight: 800;
             font-size: 13px;
             text-decoration: underline;
-            word-break: break-all;
         }
 
         .developer-credits {
@@ -452,14 +532,12 @@
             font-size: 13px;
             font-weight: 800;
             color: #0f172a;
-            letter-spacing: 0.5px;
             direction: ltr;
         }
 
         .delete-btn {
             color: #ef4444;
             cursor: pointer;
-            opacity: 0.6;
         }
 
         .delete-dept-btn {
@@ -472,32 +550,50 @@
             font-size: 11px;
             font-weight: 700;
         }
-        .delete-dept-btn:hover { background: #dc2626; }
 
         @media print {
-            .controls-card, .dept-tabs, .action-element { display: none !important; }
+            #authModal, .controls-card, .dept-tabs, .action-element, .edit-only { display: none !important; }
             body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #pdf-content { box-shadow: none; padding: 0; border: none; width: 100%; max-width: 100%; }
             @page { size: A4 portrait; margin: 8mm; }
         }
     </style>
 </head>
-<body>
+<body class="read-only-mode">
 
+    <!-- 🔑 النافذة المنبثقة لإدخال كلمة المرور عند طلب التعديل -->
+    <div id="authModal">
+        <div class="auth-card">
+            <i class="fa-solid fa-lock"></i>
+            <h3>تفعيل وضع التعديل</h3>
+            <p>يرجى إدخال كلمة المرور الخاصة بالأطباء لتمكين التعديل على البيانات</p>
+            <input type="password" id="passInput" placeholder="أدخل كلمة المرور" onkeypress="if(event.key==='Enter') checkPass()">
+            <div class="btn-group">
+                <button class="btn-confirm" onclick="checkPass()">تأكيد</button>
+                <button class="btn-cancel" onclick="closeAuthModal()">إلغاء</button>
+            </div>
+            <div id="errMsg" class="error-msg">كلمة المرور غير صحيحة!</div>
+        </div>
+    </div>
+
+    <!-- شريط التحكم العلوي -->
     <div class="controls-card">
         <div class="tool-group">
+            <button class="btn btn-mode" id="toggleEditBtn" onclick="openAuthModal()">
+                <i class="fa-solid fa-lock"></i> وضع التعديل (للأطباء)
+            </button>
             <button class="btn btn-pdf" onclick="generatePDF()">
-                <i class="fa-solid fa-print"></i> طباعة / حفظ كـ (PDF)
+                <i class="fa-solid fa-print"></i> طباعة / حفظ (PDF)
             </button>
-            <button class="btn btn-add-dept" onclick="addNewDepartment()">
-                <i class="fa-solid fa-square-plus"></i> إضافة قسم / مكان جديد
+            <button class="btn btn-add-dept edit-only" onclick="addNewDepartment()">
+                <i class="fa-solid fa-square-plus"></i> إضافة قسم
             </button>
-            <button class="btn btn-reset" onclick="clearData()">
+            <button class="btn btn-reset edit-only" onclick="clearData()">
                 <i class="fa-solid fa-rotate-right"></i> تصفير البيانات
             </button>
         </div>
 
-        <div class="tool-group">
+        <div class="tool-group edit-only">
             <span class="tool-title"><i class="fa-solid fa-font"></i> الخط:</span>
             <select class="font-select-control" onchange="changeFontFamily(this.value)">
                 <option value="'Cairo', sans-serif">Cairo (الافتراضي)</option>
@@ -507,29 +603,25 @@
                 <option value="'Aref Ruqaa', serif">Aref Ruqaa (رقعة)</option>
             </select>
 
-            <span class="tool-title" style="margin-right:6px;"><i class="fa-solid fa-pen-to-square"></i> التنسيق:</span>
-            <button class="btn btn-fmt" onmousedown="applyFormat(event, 'bold')" title="خط عريض Bold">
-                <i class="fa-solid fa-bold"></i> غامق
+            <button class="btn btn-fmt" onmousedown="applyFormat(event, 'bold')" title="غامق Bold">
+                <i class="fa-solid fa-bold"></i>
             </button>
-            <button class="btn btn-fmt" style="background:#64748b;" onmousedown="applyFormat(event, 'removeFormat')" title="إزالة التنسيق">
-                <i class="fa-solid fa-remove-format"></i> مسح
+            <button class="btn btn-fmt" style="background:#64748b;" onmousedown="applyFormat(event, 'removeFormat')" title="مسح التنسيق">
+                <i class="fa-solid fa-remove-format"></i>
             </button>
 
-            <span class="tool-title" style="margin-right:6px;"><i class="fa-solid fa-palette"></i> الألوان:</span>
             <div class="color-dot" style="background:#dc2626;" onmousedown="applyColor(event, '#dc2626')"></div>
             <div class="color-dot" style="background:#16a34a;" onmousedown="applyColor(event, '#16a34a')"></div>
             <div class="color-dot" style="background:#2563eb;" onmousedown="applyColor(event, '#2563eb')"></div>
             <div class="color-dot" style="background:#0f2b48;" onmousedown="applyColor(event, '#0f2b48')"></div>
-            <div class="color-dot" style="background:#7e22ce;" onmousedown="applyColor(event, '#7e22ce')"></div>
-            <div class="color-dot" style="background:#065f46;" onmousedown="applyColor(event, '#065f46')"></div>
             <div class="color-dot" style="background:#000000;" onmousedown="applyColor(event, '#000000')"></div>
         </div>
     </div>
 
-    <!-- أزرار اختيار الأقسام (Tabs) -->
+    <!-- أزرار الأقسام (Tabs) -->
     <div class="dept-tabs action-element" id="tabsContainer">
         <button class="tab-btn tab-all active" onclick="showTab('all', this)">
-            <i class="fa-solid fa-border-all"></i> عرض جميع الأقسام
+            <i class="fa-solid fa-border-all"></i> عرض الجميع
         </button>
         <button class="tab-btn tab-men" id="tab-btn-card-men" onclick="showTab('card-men', this)">
             <i class="fa-solid fa-mars"></i> <span id="label-card-men">ردهة الرجال</span>
@@ -586,12 +678,12 @@
                         <i class="fa-solid fa-mars"></i>
                         <input type="text" class="dept-title-editable" value="ردهة الرجال (Male Ward)" oninput="updateTabTitle('card-men', this.value); saveData();" />
                     </div>
-                    <div class="dept-actions">
-                        <label class="change-color-btn action-element">
-                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                    <div class="dept-actions edit-only">
+                        <label class="change-color-btn">
+                            <i class="fa-solid fa-palette"></i> لون
                             <input type="color" onchange="changeDeptColor('card-men', this.value)">
                         </label>
-                        <button class="btn btn-add-patient action-element" onclick="addRow('men-tbody')">+ إضافة حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('men-tbody')">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -624,17 +716,17 @@
                             <th style="width: 18%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
                             <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
-                            <th class="action-element" style="width: 5%;"></th>
+                            <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="men-tbody">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
                 </table>
@@ -647,12 +739,12 @@
                         <i class="fa-solid fa-venus"></i>
                         <input type="text" class="dept-title-editable" value="ردهة النساء (Female Ward)" oninput="updateTabTitle('card-women', this.value); saveData();" />
                     </div>
-                    <div class="dept-actions">
-                        <label class="change-color-btn action-element">
-                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                    <div class="dept-actions edit-only">
+                        <label class="change-color-btn">
+                            <i class="fa-solid fa-palette"></i> لون
                             <input type="color" onchange="changeDeptColor('card-women', this.value)">
                         </label>
-                        <button class="btn btn-add-patient action-element" onclick="addRow('women-tbody')">+ إضافة حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('women-tbody')">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -685,17 +777,17 @@
                             <th style="width: 18%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
                             <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
-                            <th class="action-element" style="width: 5%;"></th>
+                            <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="women-tbody">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
                 </table>
@@ -708,12 +800,12 @@
                         <i class="fa-solid fa-heart-pulse"></i>
                         <input type="text" class="dept-title-editable" value="العناية الباطنية (Medical ICU)" oninput="updateTabTitle('card-med-icu', this.value); saveData();" />
                     </div>
-                    <div class="dept-actions">
-                        <label class="change-color-btn action-element">
-                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                    <div class="dept-actions edit-only">
+                        <label class="change-color-btn">
+                            <i class="fa-solid fa-palette"></i> لون
                             <input type="color" onchange="changeDeptColor('card-med-icu', this.value)">
                         </label>
-                        <button class="btn btn-add-patient action-element" onclick="addRow('med-icu-tbody')">+ إضافة حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('med-icu-tbody')">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -746,17 +838,17 @@
                             <th style="width: 18%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
                             <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
-                            <th class="action-element" style="width: 5%;"></th>
+                            <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="med-icu-tbody">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()">سالم علي</div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()">د. خالد العرجان</div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()">IHD<br>DM, St elevation<br>in lead v1-v3</div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()">عمل ايكو غداً صباحاً</div></td>
-                            <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">سالم علي</div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">د. خالد العرجان</div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">IHD<br>DM, St elevation<br>in lead v1-v3</div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">عمل ايكو غداً صباحاً</div></td>
+                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
                 </table>
@@ -769,12 +861,12 @@
                         <i class="fa-solid fa-scalpel"></i>
                         <input type="text" class="dept-title-editable" value="العناية الجراحية (Surgical ICU)" oninput="updateTabTitle('card-surg-icu', this.value); saveData();" />
                     </div>
-                    <div class="dept-actions">
-                        <label class="change-color-btn action-element">
-                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                    <div class="dept-actions edit-only">
+                        <label class="change-color-btn">
+                            <i class="fa-solid fa-palette"></i> لون
                             <input type="color" onchange="changeDeptColor('card-surg-icu', this.value)">
                         </label>
-                        <button class="btn btn-add-patient action-element" onclick="addRow('surg-icu-tbody')">+ إضافة حالة</button>
+                        <button class="btn btn-add-patient" onclick="addRow('surg-icu-tbody')">+ حالة</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -807,17 +899,17 @@
                             <th style="width: 18%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
                             <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
-                            <th class="action-element" style="width: 5%;"></th>
+                            <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="surg-icu-tbody">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                            <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
+                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
                 </table>
@@ -834,7 +926,7 @@
 
     </div>
 
-    <!-- 🔻 كود الربط المباشر المعدل لمنع اختفاء الكيبورد 🔻 -->
+    <!-- 🔻 كود الربط المباشر مع Firebase 🔻 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -856,14 +948,13 @@
         let isRemoteUpdate = false;
 
         window.saveDataToFirebase = function(data) {
-            if (isRemoteUpdate) return;
+            if (isRemoteUpdate || !window.isEditMode) return;
             set(ref(database, 'handoverDataMap_v2'), data);
         };
 
         const handoverRef = ref(database, 'handoverDataMap_v2');
         onValue(handoverRef, (snapshot) => {
             const data = snapshot.val();
-            // عدم تحديث الواجهة إذا كان المستخدم حالياً يكتب لتجنب إغلاق الكيبورد
             if (data && window.renderDataFromFirebase && document.activeElement.getAttribute('contenteditable') !== 'true' && document.activeElement.tagName !== 'INPUT') {
                 isRemoteUpdate = true;
                 window.renderDataFromFirebase(data);
@@ -873,6 +964,59 @@
     </script>
 
     <script>
+        // 🔑 كلمة المرور الخاصة بالتعديل
+        const APP_PASSWORD = "1020";
+        window.isEditMode = false;
+
+        function openAuthModal() {
+            if (window.isEditMode) {
+                // إلغاء تفعيل وضع التعديل (قفل الموقع)
+                setEditMode(false);
+            } else {
+                document.getElementById('authModal').style.display = 'flex';
+                document.getElementById('passInput').focus();
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+            document.getElementById('passInput').value = '';
+            document.getElementById('errMsg').style.display = 'none';
+        }
+
+        function checkPass() {
+            const inputVal = document.getElementById('passInput').value;
+            if (inputVal === APP_PASSWORD) {
+                closeAuthModal();
+                setEditMode(true);
+            } else {
+                document.getElementById('errMsg').style.display = 'block';
+            }
+        }
+
+        function setEditMode(enable) {
+            window.isEditMode = enable;
+            const btn = document.getElementById('toggleEditBtn');
+
+            if (enable) {
+                document.body.classList.remove('read-only-mode');
+                document.body.classList.add('edit-mode-active');
+                btn.innerHTML = `<i class="fa-solid fa-lock-open"></i> قفل التعديل (مُفعل الآن)`;
+                btn.style.background = "#16a34a"; // تحويل الزر للون الأخضر
+                
+                // تمكين التعديل في الخلايا
+                document.querySelectorAll('.cell-editable').forEach(cell => cell.setAttribute('contenteditable', 'true'));
+            } else {
+                document.body.classList.add('read-only-mode');
+                document.body.classList.remove('edit-mode-active');
+                btn.innerHTML = `<i class="fa-solid fa-lock"></i> وضع التعديل (للأطباء)`;
+                btn.style.background = "#0284c7"; // إرجاع الزر للون الأزرق الأصلي
+                
+                // تعطيل التعديل في الخلايا
+                document.querySelectorAll('.cell-editable').forEach(cell => cell.setAttribute('contenteditable', 'false'));
+            }
+        }
+
         document.getElementById('appLiveUrl').href = window.location.href;
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
@@ -962,6 +1106,8 @@
             tabBtn.innerHTML = `<i class="fa-solid fa-hospital-user"></i> <span id="label-${cardId}">${deptName}</span>`;
             tabsContainer.appendChild(tabBtn);
 
+            const isEditable = window.isEditMode ? 'true' : 'false';
+
             const wrapper = document.getElementById('departmentsWrapper');
             const card = document.createElement('div');
             card.className = 'dept-card';
@@ -972,13 +1118,13 @@
                         <i class="fa-solid fa-hospital-user"></i>
                         <input type="text" class="dept-title-editable" value="${deptName}" oninput="updateTabTitle('${cardId}', this.value); saveData();" />
                     </div>
-                    <div class="dept-actions">
-                        <label class="change-color-btn action-element">
-                            <i class="fa-solid fa-palette"></i> تغيير اللون
+                    <div class="dept-actions edit-only">
+                        <label class="change-color-btn">
+                            <i class="fa-solid fa-palette"></i> لون
                             <input type="color" value="${autoColor}" onchange="changeDeptColor('${cardId}', this.value)">
                         </label>
-                        <button class="btn btn-add-patient action-element" onclick="addRow('${tbodyId}')">+ إضافة حالة</button>
-                        <button class="delete-dept-btn action-element" onclick="removeDepartment('${cardId}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                        <button class="btn btn-add-patient" onclick="addRow('${tbodyId}')">+ حالة</button>
+                        <button class="delete-dept-btn" onclick="removeDepartment('${cardId}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 </div>
                 <div class="dept-sub-header">
@@ -1011,17 +1157,17 @@
                             <th style="width: 18%;">الطبيب الاختصاص</th>
                             <th style="width: 22%;">التشخيص الطبي</th>
                             <th style="width: 25%;">الخطة العلاجية والتفاصيل</th>
-                            <th class="action-element" style="width: 5%;"></th>
+                            <th class="edit-only" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="${tbodyId}">
                         <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                            <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                            <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
+                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1046,14 +1192,15 @@
             const tbody = document.getElementById(tbodyId);
             if(!tbody) return;
             const count = tbody.children.length + 1;
+            const isEditable = window.isEditMode ? 'true' : 'false';
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><span class="bed-badge cell-editable" contenteditable="true" oninput="saveData()">Case ${count}</span></td>
-                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                <td><div class="cell-editable" contenteditable="true" oninput="saveData()"></div></td>
-                <td class="action-element" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
+                <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span></td>
+                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
+                <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
             `;
             tbody.appendChild(tr);
             saveData();
@@ -1064,8 +1211,9 @@
             saveData();
         }
 
-        /* --- حفظ البيانات مع تأخير بسيط (Debounce) لضمان عدم اختفاء الكيبورد --- */
         function saveData() {
+            if (!window.isEditMode) return;
+            
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
                 const fontSelect = document.querySelector('.font-select-control');
@@ -1101,6 +1249,9 @@
             if(data.htmlContent) document.getElementById('departmentsWrapper').innerHTML = data.htmlContent;
             if(data.tabsContent) document.getElementById('tabsContainer').innerHTML = data.tabsContent;
             if(data.dynamicCounter) dynamicDeptCounter = data.dynamicCounter;
+
+            // إعادة تطبيـق الحماية للحقول
+            setEditMode(window.isEditMode);
         };
 
         function loadData() {
