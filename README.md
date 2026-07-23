@@ -20,390 +20,200 @@
             --main-font: 'Cairo', sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            font-family: var(--main-font);
-        }
+        * { box-sizing: border-box; font-family: var(--main-font); }
+        body { background-color: var(--bg-body); margin: 0; padding: 15px; color: #1e293b; }
 
-        body {
-            background-color: var(--bg-body);
-            margin: 0;
-            padding: 15px;
-            color: #1e293b;
-        }
-
+        /* Auth Modal */
         #authModal {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(4px);
-            z-index: 99999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
+            z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px;
         }
 
-        .auth-card {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            text-align: center;
-            max-width: 360px;
-            width: 100%;
+        /* GCS Modal */
+        #gcsModal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(3px);
+            z-index: 99998; display: none; align-items: center; justify-content: center; padding: 20px;
         }
 
-        .auth-card i {
-            font-size: 40px;
-            color: #2563eb;
-            margin-bottom: 10px;
+        .auth-card, .gcs-card {
+            background: #ffffff; padding: 22px; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; max-width: 380px; width: 100%;
         }
-
-        .auth-card h3 { margin: 0 0 8px 0; color: #0f172a; font-size: 17px; }
+        .auth-card i, .gcs-card i.head-icon { font-size: 36px; color: #2563eb; margin-bottom: 8px; }
+        .auth-card h3, .gcs-card h3 { margin: 0 0 12px 0; color: #0f172a; font-size: 16px; }
         .auth-card p { color: #64748b; font-size: 13px; margin-bottom: 15px; }
-
         .auth-card input {
-            width: 100%; padding: 10px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 15px;
-            text-align: center;
-            outline: none;
-            margin-bottom: 12px;
+            width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;
+            font-size: 15px; text-align: center; outline: none; margin-bottom: 12px;
         }
-
-        .auth-card .btn-group { display: flex; gap: 8px; }
-
-        .auth-card button {
-            flex: 1; padding: 9px;
-            border: none; border-radius: 8px;
-            font-weight: 700; font-size: 13px; cursor: pointer;
-        }
-
+        .btn-group { display: flex; gap: 8px; margin-top: 15px; }
+        .btn-group button { flex: 1; padding: 9px; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; }
         .btn-confirm { background: #2563eb; color: white; }
         .btn-cancel { background: #e2e8f0; color: #475569; }
+        .error-msg { color: #ef4444; font-size: 12px; font-weight: 700; margin-top: 8px; display: none; }
 
-        .error-msg {
-            color: #ef4444; font-size: 12px; font-weight: 700;
-            margin-top: 8px; display: none;
+        /* GCS Modal Form Styles */
+        .gcs-calc-field {
+            display: flex; flex-direction: column; gap: 4px; text-align: right; margin-bottom: 10px;
+        }
+        .gcs-calc-field label { font-size: 12px; font-weight: 700; color: #334155; }
+        .gcs-calc-field select {
+            padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; background: #f8fafc;
+        }
+        .gcs-modal-score {
+            font-size: 15px; font-weight: 800; color: #dc2626; background: #fef2f2; padding: 8px; border-radius: 8px; border: 1px solid #fca5a5; margin-top: 10px;
         }
 
         .controls-card {
-            max-width: 1150px;
-            margin: 0 auto 15px auto;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 10px 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-            border: 1px solid #cbd5e1;
-            position: sticky; top: 10px; z-index: 1000;
+            max-width: 1150px; margin: 0 auto 15px auto; background: #ffffff; border-radius: 12px;
+            padding: 10px 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex;
+            align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+            border: 1px solid #cbd5e1; position: sticky; top: 10px; z-index: 1000;
         }
 
         .tool-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .tool-title { font-size: 13px; font-weight: 700; color: #475569; }
 
         .btn {
-            border: none; border-radius: 8px;
-            padding: 7px 14px; font-size: 13px; font-weight: 700;
-            cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
-            transition: all 0.2s ease;
+            border: none; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;
         }
-
-        .btn-mode { background: #0284c7; color: white; box-shadow: 0 3px 8px rgba(2, 132, 199, 0.2); }
-        .btn-lock { background: #dc2626; color: white; box-shadow: 0 3px 8px rgba(220, 38, 38, 0.2); }
-        .btn-pdf { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 3px 8px rgba(16, 185, 129, 0.2); }
+        .btn-mode { background: #0284c7; color: white; }
+        .btn-lock { background: #dc2626; color: white; }
+        .btn-pdf { background: linear-gradient(135deg, #10b981, #059669); color: white; }
         .btn-reset { background: #ef4444; color: white; }
         .btn-add-dept { background: #4f46e5; color: white; }
-
-        .btn-add-subdept {
-            background: #0d9488;
-            color: white;
-            padding: 4px 8px;
-            font-size: 11px;
-            border-radius: 6px;
-        }
-
+        .btn-add-subdept { background: #0d9488; color: white; padding: 4px 8px; font-size: 11px; border-radius: 6px; }
         .btn-fmt { background: #0f172a; color: white; padding: 6px 12px; }
 
         .font-select-control {
-            padding: 6px 10px; border-radius: 6px;
-            border: 1px solid #cbd5e1; font-size: 12px; font-weight: 700;
-            outline: none; cursor: pointer; background: #fff;
+            padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1;
+            font-size: 12px; font-weight: 700; outline: none; cursor: pointer; background: #fff;
         }
 
-        .btn-add-patient {
-            background: #ffffff; color: #0f172a;
-            padding: 4px 8px; font-size: 11px;
-            border-radius: 6px; font-weight: 800;
-        }
+        .btn-add-patient { background: #ffffff; color: #0f172a; padding: 4px 8px; font-size: 11px; border-radius: 6px; font-weight: 800; }
+        .color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.15); cursor: pointer; display: inline-block; }
 
-        .color-dot {
-            width: 22px; height: 22px; border-radius: 50%;
-            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-            cursor: pointer; display: inline-block;
-        }
-
-        .dept-tabs {
-            max-width: 1150px; margin: 0 auto 15px auto;
-            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
-        }
-
+        .dept-tabs { max-width: 1150px; margin: 0 auto 15px auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
         .tab-btn {
-            border: none; border-radius: 8px;
-            padding: 8px 14px; font-weight: 700; font-size: 13px;
+            border: none; border-radius: 8px; padding: 8px 14px; font-weight: 700; font-size: 13px;
             color: #ffffff; cursor: pointer; display: flex; align-items: center; gap: 6px;
             transition: all 0.2s ease; opacity: 0.75; background-color: #334155;
         }
-
         .tab-btn:hover { opacity: 0.95; }
         .tab-btn.active { opacity: 1; box-shadow: 0 3px 10px rgba(0,0,0,0.2); outline: 2px solid rgba(0,0,0,0.2); }
-
         .tab-men { background-color: var(--color-men); }
         .tab-women { background-color: var(--color-women); }
         .tab-med-icu { background-color: var(--color-med-icu); }
         .tab-surg-icu { background-color: var(--color-surg-icu); }
 
         #pdf-content {
-            max-width: 1150px; margin: 0 auto;
-            background: #ffffff; padding: 20px 25px;
-            border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.04);
-            border: 1px solid #e2e8f0;
+            max-width: 1150px; margin: 0 auto; background: #ffffff; padding: 20px 25px;
+            border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;
         }
 
         .bronze-badge-container { text-align: center; margin-bottom: 12px; }
-
         .bronze-badge {
             display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-            background-color: #e6c594; color: #000000;
-            font-weight: 800; font-size: 18px; padding: 6px 24px;
-            border-radius: 8px; border: 1px solid #d4a359;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            background-color: #e6c594; color: #000000; font-weight: 800; font-size: 18px;
+            padding: 6px 24px; border-radius: 8px; border: 1px solid #d4a359;
         }
 
-        .header-box-slim {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white; border-radius: 10px; padding: 10px 16px; margin-bottom: 18px;
-        }
-
+        .header-box-slim { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-radius: 10px; padding: 10px 16px; margin-bottom: 18px; }
         .header-flex { display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
         .hospital-title-slim { font-size: 16px; font-weight: 800; color: #facc15; display: flex; align-items: center; gap: 6px; }
         .header-grid-slim { display: flex; align-items: center; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
-
-        .info-field-slim {
-            display: flex; align-items: center; gap: 6px; font-size: 13px;
-            background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;
-        }
-
+        .info-field-slim { display: flex; align-items: center; gap: 6px; font-size: 13px; background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px; }
         .info-field-slim i { color: #38bdf8; font-size: 14px; }
-
-        .info-field-slim input, .info-field-slim select {
-            background: #ffffff; border: none; padding: 4px 8px;
-            border-radius: 4px; font-weight: 700; color: #0f172a; outline: none; font-size: 12px;
-        }
+        .info-field-slim input, .info-field-slim select { background: #ffffff; border: none; padding: 4px 8px; border-radius: 4px; font-weight: 700; color: #0f172a; outline: none; font-size: 12px; }
 
         .dept-card { margin-bottom: 22px; border-radius: 10px; overflow: hidden; border: 1px solid #cbd5e1; background: #fff; }
-
-        .dept-banner {
-            padding: 8px 15px; color: white; font-weight: 700; font-size: 15px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
+        .dept-banner { padding: 8px 15px; color: white; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: space-between; }
         .dept-men .dept-banner { background-color: var(--color-men); }
         .dept-women .dept-banner { background-color: var(--color-women); }
         .dept-med-icu .dept-banner { background-color: var(--color-med-icu); }
         .dept-surg-icu .dept-banner { background-color: var(--color-surg-icu); }
-
         .dept-title { display: flex; align-items: center; gap: 8px; flex: 1; }
-
-        .dept-title-editable {
-            background: transparent; border: 1px dashed transparent;
-            color: white; font-weight: 800; font-size: 15px;
-            padding: 2px 6px; border-radius: 4px; width: 80%; outline: none;
-        }
+        .dept-title-editable { background: transparent; border: 1px dashed transparent; color: white; font-weight: 800; font-size: 15px; padding: 2px 6px; border-radius: 4px; width: 80%; outline: none; }
 
         .dept-actions { display: flex; align-items: center; gap: 6px; }
+        .change-color-btn { background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; position: relative; }
+        .change-color-btn input[type="color"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
-        .change-color-btn {
-            background: rgba(255, 255, 255, 0.2); color: white;
-            border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 6px;
-            padding: 4px 8px; font-size: 11px; font-weight: 700;
-            cursor: pointer; position: relative;
-        }
-
-        .change-color-btn input[type="color"] {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
-        }
-
-        .dept-sub-header {
-            background: #f1f5f9; padding: 6px 15px;
-            display: flex; align-items: center; gap: 12px;
-            flex-wrap: wrap; border-bottom: 1px solid #e2e8f0; font-size: 12px;
-        }
-
+        .dept-sub-header { background: #f1f5f9; padding: 6px 15px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid #e2e8f0; font-size: 12px; }
         .dept-sub-field { display: flex; align-items: center; gap: 5px; color: #334155; font-weight: 700; }
-
-        .dept-sub-field input, .dept-sub-field select {
-            border: 1px solid #cbd5e1; padding: 3px 6px; border-radius: 4px;
-            font-size: 12px; font-weight: 700; color: #0f172a; outline: none; background: #ffffff;
-        }
+        .dept-sub-field input, .dept-sub-field select { border: 1px solid #cbd5e1; padding: 3px 6px; border-radius: 4px; font-size: 12px; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; }
 
         .sub-dept-container { padding: 10px 15px; background-color: #fafafa; }
-
-        .sub-dept-card {
-            margin-top: 10px; margin-bottom: 15px;
-            border: 1px solid #cbd5e1; border-radius: 8px;
-            overflow: hidden; background: #ffffff;
-        }
-
-        .sub-dept-banner {
-            background-color: #475569; color: white;
-            padding: 6px 12px; display: flex;
-            align-items: center; justify-content: space-between; font-size: 13px;
-        }
-
-        .sub-dept-title-editable {
-            background: transparent; border: 1px dashed transparent;
-            color: white; font-weight: 700; font-size: 13px;
-            padding: 1px 4px; border-radius: 4px; width: 70%; outline: none;
-        }
+        .sub-dept-card { margin-top: 10px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #ffffff; }
+        .sub-dept-banner { background-color: #475569; color: white; padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+        .sub-dept-title-editable { background: transparent; border: 1px dashed transparent; color: white; font-weight: 700; font-size: 13px; padding: 1px 4px; border-radius: 4px; width: 70%; outline: none; }
 
         table { width: 100%; border-collapse: collapse; }
-
-        th {
-            background-color: #f8fafc; color: #475569;
-            font-size: 12px; font-weight: 700; padding: 8px 10px;
-            text-align: right; border-bottom: 2px solid #e2e8f0;
-        }
-
+        th { background-color: #f8fafc; color: #475569; font-size: 12px; font-weight: 700; padding: 8px 10px; text-align: right; border-bottom: 2px solid #e2e8f0; }
         td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; vertical-align: middle; }
 
         .cell-editable { outline: none; min-height: 22px; padding: 3px; border-radius: 4px; }
         
-        /* ألوان الخطوط المطلوبة */
         .text-black { color: #000000 !important; font-weight: 600; }
         .text-darkblue { color: #1e3a8a !important; font-weight: 700; }
-        .text-gcs-red { color: #dc2626 !important; font-weight: 800; direction: ltr; text-align: center; }
+        .text-gcs-red { color: #dc2626 !important; font-weight: 800; }
 
-        /* أسلوب عرض Glasgow Coma Scale */
-        .gcs-box {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            background: #fff5f5;
-            padding: 4px 6px;
-            border-radius: 6px;
-            border: 1px solid #fecaca;
-            font-size: 11px;
-        }
-
-        .gcs-select-group {
-            display: flex;
+        /* Compact GCS Display Box in Table Cell */
+        .gcs-compact-badge {
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 4px;
-        }
-
-        .gcs-select-group label {
-            font-weight: 700;
-            color: #991b1b;
-            font-size: 10px;
-        }
-
-        .gcs-select-group select {
-            padding: 1px 2px;
-            border-radius: 4px;
+            gap: 6px;
+            background: #fff0f0;
             border: 1px solid #fca5a5;
-            font-size: 10px;
-            color: #dc2626;
-            font-weight: 700;
-            background: white;
-            outline: none;
-        }
-
-        .gcs-score-total {
-            text-align: center;
+            padding: 3px 8px;
+            border-radius: 6px;
             font-weight: 800;
             color: #dc2626;
             font-size: 12px;
-            border-top: 1px dashed #fca5a5;
-            padding-top: 2px;
-            margin-top: 2px;
+            white-space: nowrap;
         }
+
+        .gcs-calc-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 5px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .gcs-calc-btn:hover { background: #b91c1c; }
 
         body.read-only-mode .edit-only { display: none !important; }
-        
-        body.read-only-mode input, 
-        body.read-only-mode select {
-            pointer-events: none; border-color: transparent !important; background: transparent !important;
-        }
-
+        body.read-only-mode input, body.read-only-mode select { pointer-events: none; border-color: transparent !important; background: transparent !important; }
         body.read-only-mode .cell-editable { pointer-events: none; }
+        body.edit-mode-active .cell-editable:focus { background-color: #fef9c3; box-shadow: inset 0 0 0 1px #fde047; }
 
-        body.edit-mode-active .cell-editable:focus {
-            background-color: #fef9c3; box-shadow: inset 0 0 0 1px #fde047;
-        }
+        .bed-badge { display: inline-block; background: #e2e8f0; color: #1e293b; font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
 
-        .bed-badge {
-            display: inline-block; background: #e2e8f0;
-            color: #1e293b; font-weight: 700; padding: 2px 6px;
-            border-radius: 4px; font-size: 12px;
-        }
-
-        .footer-banner-box {
-            margin-top: 25px; padding: 12px 18px;
-            background: #f8fafc; border: 1.5px solid #cbd5e1;
-            border-radius: 10px; text-align: center;
-        }
-
+        .footer-banner-box { margin-top: 25px; padding: 12px 18px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; text-align: center; }
         .footer-banner-box .footer-title { font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px; }
         .footer-banner-box a { color: #2563eb; font-weight: 800; font-size: 13px; text-decoration: underline; }
-
         .developer-credits { margin-top: 10px; font-size: 13px; font-weight: 800; color: #0f172a; direction: ltr; }
 
         .delete-btn { color: #ef4444; cursor: pointer; }
+        .delete-dept-btn { background: rgba(239, 68, 68, 0.85); color: #ffffff; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px; font-weight: 700; }
 
-        .delete-dept-btn {
-            background: rgba(239, 68, 68, 0.85); color: #ffffff;
-            border: none; border-radius: 6px; padding: 4px 8px;
-            cursor: pointer; font-size: 11px; font-weight: 700;
-        }
-
-        /* الزر الدوار العائم */
         .floating-edit-btn {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: #0284c7;
-            color: white;
-            border: none;
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
-            cursor: pointer;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
+            position: fixed; bottom: 25px; left: 25px; width: 55px; height: 55px; border-radius: 50%;
+            background: #0284c7; color: white; border: none; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+            cursor: pointer; z-index: 9999; display: flex; align-items: center; justify-content: center; font-size: 22px;
             transition: transform 0.6s ease-in-out, background-color 0.3s;
         }
 
-        .floating-edit-btn.active {
-            background: #dc2626;
-            transform: rotate(360deg);
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
-        }
+        .floating-edit-btn.active { background: #dc2626; transform: rotate(360deg); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4); }
 
         @media print {
-            #authModal, .controls-card, .dept-tabs, .action-element, .edit-only, .floating-edit-btn { display: none !important; }
+            #authModal, #gcsModal, .controls-card, .dept-tabs, .action-element, .edit-only, .floating-edit-btn, .gcs-calc-btn { display: none !important; }
             body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             #pdf-content { box-shadow: none; padding: 0; border: none; width: 100%; max-width: 100%; }
             @page { size: A4 portrait; margin: 8mm; }
@@ -412,22 +222,72 @@
 </head>
 <body class="read-only-mode">
 
-    <!-- الزر العائم للتعديل وإغلاق التعديل -->
     <button class="floating-edit-btn" id="floatingEditBtn" onclick="toggleEditModeFloating()" title="وضع التعديل / قفل">
         <i class="fa-solid fa-lock" id="floatingIcon"></i>
     </button>
 
+    <!-- Auth Modal -->
     <div id="authModal">
         <div class="auth-card">
             <i class="fa-solid fa-lock"></i>
             <h3>تفعيل وضع التعديل</h3>
-            <p>يرجى إدخال كلمة المرور الخاصة بالأطباء لتمكين التعديل على البيانات</p>
+            <p>يرجى إدخال كلمة المرور الخاصه بالأطباء لتمكين التعديل على البيانات</p>
             <input type="password" id="passInput" placeholder="أدخل كلمة المرور" onkeypress="if(event.key==='Enter') checkPass()">
             <div class="btn-group">
                 <button class="btn-confirm" onclick="checkPass()">تأكيد</button>
                 <button class="btn-cancel" onclick="closeAuthModal()">إلغاء</button>
             </div>
             <div id="errMsg" class="error-msg">كلمة المرور غير صحيحة!</div>
+        </div>
+    </div>
+
+    <!-- GCS Calculator Popup Modal -->
+    <div id="gcsModal">
+        <div class="gcs-card">
+            <i class="fa-solid fa-brain head-icon"></i>
+            <h3>حاسبة Glasgow Coma Scale (GCS)</h3>
+            
+            <div class="gcs-calc-field">
+                <label>Eye Opening (E):</label>
+                <select id="modalGcsE" onchange="calcModalGCS()">
+                    <option value="4">4 - Spontaneous</option>
+                    <option value="3">3 - To sound</option>
+                    <option value="2">2 - To pressure</option>
+                    <option value="1">1 - None</option>
+                </select>
+            </div>
+
+            <div class="gcs-calc-field">
+                <label>Verbal Response (V):</label>
+                <select id="modalGcsV" onchange="calcModalGCS()">
+                    <option value="5">5 - Oriented</option>
+                    <option value="4">4 - Confused</option>
+                    <option value="3">3 - Words</option>
+                    <option value="2">2 - Sounds</option>
+                    <option value="1">1 - None</option>
+                </select>
+            </div>
+
+            <div class="gcs-calc-field">
+                <label>Motor Response (M):</label>
+                <select id="modalGcsM" onchange="calcModalGCS()">
+                    <option value="6">6 - Obeys commands</option>
+                    <option value="5">5 - Localising</option>
+                    <option value="4">4 - Normal flexion</option>
+                    <option value="3">3 - Abnormal flexion</option>
+                    <option value="2">2 - Extension</option>
+                    <option value="1">1 - None</option>
+                </select>
+            </div>
+
+            <div class="gcs-modal-score">
+                Total Score: <span id="modalGcsTotal">15/15</span>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-confirm" onclick="applyGCSModal()">حفظ وتحديث</button>
+                <button class="btn-cancel" onclick="closeGCSModal()">إلغاء</button>
+            </div>
         </div>
     </div>
 
@@ -569,11 +429,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 7%;">الحالة</th>
                             <th style="width: 18%;">اسم المريض</th>
-                            <th style="width: 7%;">العمر</th>
-                            <th style="width: 17%;">الطبيب الاختصاص</th>
-                            <th style="width: 22%;">التشخيص الطبي</th>
+                            <th style="width: 6%;">العمر</th>
+                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 23%;">التشخيص الطبي</th>
                             <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
@@ -583,7 +443,7 @@
                 </table>
 
                 <div class="sub-dept-container" id="sub-container-card-men">
-                    <!-- القسم الفرعي الافتراضي: ردهة الجراحة العصبية -->
+                    <!-- قسم فرعي: ردهة الجراحة العصبية مع حاسبة GCS المدمجة -->
                     <div class="sub-dept-card" id="sub-neurosurg">
                         <div class="sub-dept-banner" id="sub-banner-sub-neurosurg" style="background-color: #831843;">
                             <div style="display:flex; align-items:center; gap:6px; flex:1;">
@@ -603,10 +463,10 @@
                             <thead>
                                 <tr>
                                     <th style="width: 7%;">الحالة</th>
-                                    <th style="width: 16%;">اسم المريض</th>
+                                    <th style="width: 18%;">اسم المريض</th>
                                     <th style="width: 6%;">العمر</th>
-                                    <th style="width: 18%;">مقياس الوعي (GCS)</th>
-                                    <th style="width: 15%;">الطبيب الاختصاص</th>
+                                    <th style="width: 14%;">مقياس الوعي (GCS)</th>
+                                    <th style="width: 17%;">الطبيب الاختصاص</th>
                                     <th style="width: 18%;">التشخيص الطبي</th>
                                     <th style="width: 15%;">الخطة العلاجية والتفاصيل</th>
                                     <th class="edit-only" style="width: 5%;"></th>
@@ -616,45 +476,16 @@
                                 <tr>
                                     <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
                                     <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">خالد مروان</div></td>
-                                    <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">45</div></td>
+                                    <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">34</div></td>
                                     <td>
-                                        <div class="gcs-box">
-                                            <div class="gcs-select-group">
-                                                <label>Eye (E):</label>
-                                                <select onchange="calculateGCS(this); saveData();">
-                                                    <option value="4">4 - Spontaneous</option>
-                                                    <option value="3">3 - To sound</option>
-                                                    <option value="2">2 - To pressure</option>
-                                                    <option value="1">1 - None</option>
-                                                </select>
-                                            </div>
-                                            <div class="gcs-select-group">
-                                                <label>Verbal (V):</label>
-                                                <select onchange="calculateGCS(this); saveData();">
-                                                    <option value="5">5 - Oriented</option>
-                                                    <option value="4">4 - Confused</option>
-                                                    <option value="3">3 - Words</option>
-                                                    <option value="2">2 - Sounds</option>
-                                                    <option value="1">1 - None</option>
-                                                </select>
-                                            </div>
-                                            <div class="gcs-select-group">
-                                                <label>Motor (M):</label>
-                                                <select onchange="calculateGCS(this); saveData();">
-                                                    <option value="6">6 - Obeys commands</option>
-                                                    <option value="5">5 - Localising</option>
-                                                    <option value="4">4 - Normal flexion</option>
-                                                    <option value="3">3 - Abnormal flexion</option>
-                                                    <option value="2">2 - Extension</option>
-                                                    <option value="1">1 - None</option>
-                                                </select>
-                                            </div>
-                                            <div class="gcs-score-total">GCS: <span class="gcs-total-val text-gcs-red">15/15</span></div>
+                                        <div class="gcs-compact-badge" data-e="4" data-v="5" data-m="6">
+                                            <span>GCS: <strong class="gcs-val">15/15</strong></span>
+                                            <button class="gcs-calc-btn edit-only" onclick="openGCSModal(this)" title="إعادة حساب GCS">🧮</button>
                                         </div>
                                     </td>
                                     <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">د. ممدوح مصلح</div></td>
-                                    <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">Head Trauma</div></td>
-                                    <td><div class="cell-editable" contenteditable="false" oninput="saveData()">CT Scan Done</div></td>
+                                    <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">Head Injury</div></td>
+                                    <td><div class="cell-editable" contenteditable="false" oninput="saveData()">متابعة حالة الوعي</div></td>
                                     <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                                 </tr>
                             </tbody>
@@ -704,11 +535,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 7%;">الحالة</th>
                             <th style="width: 18%;">اسم المريضة</th>
-                            <th style="width: 7%;">العمر</th>
-                            <th style="width: 17%;">الطبيب الاختصاص</th>
-                            <th style="width: 22%;">التشخيص الطبي</th>
+                            <th style="width: 6%;">العمر</th>
+                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 23%;">التشخيص الطبي</th>
                             <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
@@ -769,11 +600,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 7%;">الحالة</th>
                             <th style="width: 18%;">اسم المريض</th>
-                            <th style="width: 7%;">العمر</th>
-                            <th style="width: 17%;">الطبيب الاختصاص</th>
-                            <th style="width: 22%;">التشخيص الطبي</th>
+                            <th style="width: 6%;">العمر</th>
+                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 23%;">التشخيص الطبي</th>
                             <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
@@ -781,11 +612,11 @@
                     <tbody id="med-icu-tbody">
                         <tr>
                             <td><span class="bed-badge cell-editable" contenteditable="false" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">سالم علي</div></td>
-                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">62</div></td>
-                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">د. خالد العرجان</div></td>
-                            <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">IHD<br>DM, St elevation<br>in lead v1-v3</div></td>
-                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()">عمل ايكو غداً صباحاً</div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">محمد نزار</div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">58</div></td>
+                            <td><div class="cell-editable text-black" contenteditable="false" oninput="saveData()">د مصعب</div></td>
+                            <td><div class="cell-editable text-darkblue" contenteditable="false" oninput="saveData()">IHD</div></td>
+                            <td><div class="cell-editable" contenteditable="false" oninput="saveData()"></div></td>
                             <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
                         </tr>
                     </tbody>
@@ -834,11 +665,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 8%;">الحالة</th>
+                            <th style="width: 7%;">الحالة</th>
                             <th style="width: 18%;">اسم المريض</th>
-                            <th style="width: 7%;">العمر</th>
-                            <th style="width: 17%;">الطبيب الاختصاص</th>
-                            <th style="width: 22%;">التشخيص الطبي</th>
+                            <th style="width: 6%;">العمر</th>
+                            <th style="width: 18%;">الطبيب الاختصاص</th>
+                            <th style="width: 23%;">التشخيص الطبي</th>
                             <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
                             <th class="edit-only" style="width: 5%;"></th>
                         </tr>
@@ -908,6 +739,7 @@
     <script>
         const APP_PASSWORD = "1020";
         window.isEditMode = false;
+        let activeGcsTarget = null;
 
         function openAuthModal() {
             if (window.isEditMode) {
@@ -933,6 +765,55 @@
                 document.getElementById('errMsg').style.display = 'block';
             }
         }
+
+        /* GCS Modal Functions */
+        window.openGCSModal = function(btn) {
+            activeGcsTarget = btn.closest('.gcs-compact-badge');
+            if(!activeGcsTarget) return;
+
+            const e = activeGcsTarget.getAttribute('data-e') || "4";
+            const v = activeGcsTarget.getAttribute('data-v') || "5";
+            const m = activeGcsTarget.getAttribute('data-m') || "6";
+
+            document.getElementById('modalGcsE').value = e;
+            document.getElementById('modalGcsV').value = v;
+            document.getElementById('modalGcsM').value = m;
+
+            calcModalGCS();
+            document.getElementById('gcsModal').style.display = 'flex';
+        };
+
+        window.closeGCSModal = function() {
+            document.getElementById('gcsModal').style.display = 'none';
+            activeGcsTarget = null;
+        };
+
+        window.calcModalGCS = function() {
+            const e = parseInt(document.getElementById('modalGcsE').value || 0);
+            const v = parseInt(document.getElementById('modalGcsV').value || 0);
+            const m = parseInt(document.getElementById('modalGcsM').value || 0);
+            const total = e + v + m;
+            document.getElementById('modalGcsTotal').innerText = `${total}/15`;
+        };
+
+        window.applyGCSModal = function() {
+            if(!activeGcsTarget) return;
+
+            const e = document.getElementById('modalGcsE').value;
+            const v = document.getElementById('modalGcsV').value;
+            const m = document.getElementById('modalGcsM').value;
+            const total = parseInt(e) + parseInt(v) + parseInt(m);
+
+            activeGcsTarget.setAttribute('data-e', e);
+            activeGcsTarget.setAttribute('data-v', v);
+            activeGcsTarget.setAttribute('data-m', m);
+
+            const valSpan = activeGcsTarget.querySelector('.gcs-val');
+            if(valSpan) valSpan.innerText = `${total}/15`;
+
+            closeGCSModal();
+            saveData();
+        };
 
         function toggleEditModeFloating() {
             if (window.isEditMode) {
@@ -974,13 +855,7 @@
         document.getElementById('appLiveUrl').href = window.location.href;
         document.getElementById('appLiveUrl').innerText = window.location.href;
 
-        let dynamicDeptCounter = 0;
-        let dynamicSubDeptCounter = 0;
         let saveTimeout = null;
-
-        const presetColors = [
-            '#0891b2', '#d97706', '#4f46e5', '#059669', '#be185d', '#854d0e', '#4338ca'
-        ];
 
         function changeFontFamily(font) {
             document.documentElement.style.setProperty('--main-font', font);
@@ -1006,46 +881,6 @@
             if(label) label.innerText = newTitle || 'قسم بدون عنوان';
         }
 
-        function calculateGCS(elem) {
-            const box = elem.closest('.gcs-box');
-            if(!box) return;
-            const selects = box.querySelectorAll('select');
-            let total = 0;
-            selects.forEach(s => total += parseInt(s.value || 0));
-            const display = box.querySelector('.gcs-total-val');
-            if(display) display.innerText = `${total}/15`;
-        }
-
-        let savedRange = null;
-        function restoreSelection() {
-            if (savedRange) {
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(savedRange);
-            }
-        }
-
-        document.addEventListener('selectionchange', () => {
-            const sel = window.getSelection();
-            if (sel.rangeCount > 0 && !sel.isCollapsed) {
-                savedRange = sel.getRangeAt(0);
-            }
-        });
-
-        function applyColor(event, color) {
-            event.preventDefault();
-            restoreSelection();
-            document.execCommand('foreColor', false, color);
-            saveData();
-        }
-
-        function applyFormat(event, command) {
-            event.preventDefault();
-            restoreSelection();
-            document.execCommand(command, false, null);
-            saveData();
-        }
-
         function showTab(targetCardId, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -1060,225 +895,22 @@
             });
         }
 
-        function addNewDepartment() {
-            dynamicDeptCounter++;
-            const cardId = `card-custom-${dynamicDeptCounter}`;
-            const tbodyId = `custom-tbody-${dynamicDeptCounter}`;
-            const deptName = `قسم جديد ${dynamicDeptCounter}`;
-            const todayStr = new Date().toISOString().split('T')[0];
-            const autoColor = presetColors[(dynamicDeptCounter - 1) % presetColors.length];
-
-            const tabsContainer = document.getElementById('tabsContainer');
-            const tabBtn = document.createElement('button');
-            tabBtn.className = 'tab-btn';
-            tabBtn.id = `tab-btn-${cardId}`;
-            tabBtn.style.backgroundColor = autoColor;
-            tabBtn.onclick = function() { showTab(cardId, this); };
-            tabBtn.innerHTML = `<i class="fa-solid fa-hospital-user"></i> <span id="label-${cardId}">${deptName}</span>`;
-            tabsContainer.appendChild(tabBtn);
-
-            const isEditable = window.isEditMode ? 'true' : 'false';
-
-            const wrapper = document.getElementById('departmentsWrapper');
-            const card = document.createElement('div');
-            card.className = 'dept-card';
-            card.id = cardId;
-            card.innerHTML = `
-                <div class="dept-banner" id="banner-${cardId}" style="background-color: ${autoColor}">
-                    <div class="dept-title">
-                        <i class="fa-solid fa-hospital-user"></i>
-                        <input type="text" class="dept-title-editable" value="${deptName}" oninput="updateTabTitle('${cardId}', this.value); saveData();" />
-                    </div>
-                    <div class="dept-actions edit-only">
-                        <label class="change-color-btn">
-                            <i class="fa-solid fa-palette"></i> لون
-                            <input type="color" value="${autoColor}" onchange="changeDeptColor('${cardId}', this.value)">
-                        </label>
-                        <button class="btn btn-add-subdept" onclick="addSubDepartment('${cardId}')">+ قسم فرعي</button>
-                        <button class="btn btn-add-patient" onclick="addRow('${tbodyId}', false)">+ حالة</button>
-                        <button class="delete-dept-btn" onclick="removeDepartment('${cardId}')"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </div>
-                </div>
-                <div class="dept-sub-header">
-                    <div class="dept-sub-field" style="flex:1;">
-                        <i class="fa-solid fa-user-doctor"></i>
-                        <span>تسليم إلى:</span>
-                        <input type="text" id="doc-${cardId}" placeholder="اسم الطبيب المستلم" oninput="saveData()" style="width:100%; max-width:200px;">
-                    </div>
-                    <div class="dept-sub-field">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>الهاتف:</span>
-                        <input type="tel" id="phone-${cardId}" placeholder="رقم الهاتف" oninput="saveData()" style="width:120px;">
-                    </div>
-                    <div class="dept-sub-field">
-                        <i class="fa-solid fa-calendar-day"></i>
-                        <select id="day-${cardId}" onchange="saveData()">
-                            <option>السبت</option><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option>
-                        </select>
-                    </div>
-                    <div class="dept-sub-field">
-                        <i class="fa-solid fa-calendar-check"></i>
-                        <input type="date" id="date-${cardId}" value="${todayStr}" onchange="saveData()">
-                    </div>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 8%;">الحالة</th>
-                            <th style="width: 18%;">اسم المريض</th>
-                            <th style="width: 7%;">العمر</th>
-                            <th style="width: 17%;">الطبيب الاختصاص</th>
-                            <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
-                            <th class="edit-only" style="width: 5%;"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="${tbodyId}">
-                        <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="sub-dept-container" id="sub-container-${cardId}"></div>
-            `;
-            wrapper.appendChild(card);
-            saveData();
-        }
-
-        function addSubDepartment(parentCardId) {
-            dynamicSubDeptCounter++;
-            let container = document.getElementById(`sub-container-${parentCardId}`);
-            if(!container) {
-                const parentCard = document.getElementById(parentCardId);
-                container = document.createElement('div');
-                container.className = 'sub-dept-container';
-                container.id = `sub-container-${parentCardId}`;
-                parentCard.appendChild(container);
-            }
-
-            const subId = `sub-${dynamicSubDeptCounter}`;
-            const subTbodyId = `sub-tbody-${dynamicSubDeptCounter}`;
-            const subDeptName = `قسم فرعي ${dynamicSubDeptCounter}`;
-            const isEditable = window.isEditMode ? 'true' : 'false';
-
-            const subCard = document.createElement('div');
-            subCard.className = 'sub-dept-card';
-            subCard.id = subId;
-            subCard.innerHTML = `
-                <div class="sub-dept-banner" id="sub-banner-${subId}">
-                    <div style="display:flex; align-items:center; gap:6px; flex:1;">
-                        <i class="fa-solid fa-layer-group"></i>
-                        <input type="text" class="sub-dept-title-editable" value="${subDeptName}" oninput="saveData()" />
-                    </div>
-                    <div class="dept-actions edit-only">
-                        <label class="change-color-btn">
-                            <i class="fa-solid fa-palette"></i> لون
-                            <input type="color" value="#475569" onchange="changeSubDeptColor('${subId}', this.value)">
-                        </label>
-                        <button class="btn btn-add-patient" onclick="addRow('${subTbodyId}', false)">+ حالة</button>
-                        <button class="delete-dept-btn" onclick="removeSubDepartment('${subId}')"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </div>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 8%;">الحالة</th>
-                            <th style="width: 18%;">اسم المريض</th>
-                            <th style="width: 7%;">العمر</th>
-                            <th style="width: 17%;">الطبيب الاختصاص</th>
-                            <th style="width: 22%;">التشخيص الطبي</th>
-                            <th style="width: 23%;">الخطة العلاجية والتفاصيل</th>
-                            <th class="edit-only" style="width: 5%;"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="${subTbodyId}">
-                        <tr>
-                            <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case 1</span></td>
-                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable text-darkblue" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td><div class="cell-editable" contenteditable="${isEditable}" oninput="saveData()"></div></td>
-                            <td class="edit-only" style="text-align: center;"><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRow(this)"></i></td>
-                        </tr>
-                    </tbody>
-                </table>
-            `;
-            container.appendChild(subCard);
-            saveData();
-        }
-
-        function removeSubDepartment(subId) {
-            if(confirm('هل أنت متأكد من حذف هذا القسم الفرعي؟')) {
-                const elem = document.getElementById(subId);
-                if(elem) elem.remove();
-                saveData();
-            }
-        }
-
-        function removeDepartment(cardId) {
-            if(confirm('هل أنت متأكد من حذف هذا القسم بالكامل؟')) {
-                const card = document.getElementById(cardId);
-                if(card) card.remove();
-                
-                const tab = document.getElementById(`tab-btn-${cardId}`);
-                if(tab) tab.remove();
-
-                saveData();
-            }
-        }
-
-        function addRow(tbodyId, isGCS = false) {
+        function addRow(tbodyId, hasGCS = false) {
             const tbody = document.getElementById(tbodyId);
             if(!tbody) return;
             const count = tbody.children.length + 1;
             const isEditable = window.isEditMode ? 'true' : 'false';
             const tr = document.createElement('tr');
 
-            if (isGCS) {
+            if(hasGCS) {
                 tr.innerHTML = `
                     <td><span class="bed-badge cell-editable" contenteditable="${isEditable}" oninput="saveData()">Case ${count}</span></td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
                     <td>
-                        <div class="gcs-box">
-                            <div class="gcs-select-group">
-                                <label>Eye (E):</label>
-                                <select onchange="calculateGCS(this); saveData();">
-                                    <option value="4">4 - Spontaneous</option>
-                                    <option value="3">3 - To sound</option>
-                                    <option value="2">2 - To pressure</option>
-                                    <option value="1">1 - None</option>
-                                </select>
-                            </div>
-                            <div class="gcs-select-group">
-                                <label>Verbal (V):</label>
-                                <select onchange="calculateGCS(this); saveData();">
-                                    <option value="5">5 - Oriented</option>
-                                    <option value="4">4 - Confused</option>
-                                    <option value="3">3 - Words</option>
-                                    <option value="2">2 - Sounds</option>
-                                    <option value="1">1 - None</option>
-                                </select>
-                            </div>
-                            <div class="gcs-select-group">
-                                <label>Motor (M):</label>
-                                <select onchange="calculateGCS(this); saveData();">
-                                    <option value="6">6 - Obeys commands</option>
-                                    <option value="5">5 - Localising</option>
-                                    <option value="4">4 - Normal flexion</option>
-                                    <option value="3">3 - Abnormal flexion</option>
-                                    <option value="2">2 - Extension</option>
-                                    <option value="1">1 - None</option>
-                                </select>
-                            </div>
-                            <div class="gcs-score-total">GCS: <span class="gcs-total-val text-gcs-red">15/15</span></div>
+                        <div class="gcs-compact-badge" data-e="4" data-v="5" data-m="6">
+                            <span>GCS: <strong class="gcs-val">15/15</strong></span>
+                            <button class="gcs-calc-btn edit-only" onclick="openGCSModal(this)" title="إعادة حساب GCS">🧮</button>
                         </div>
                     </td>
                     <td><div class="cell-editable text-black" contenteditable="${isEditable}" oninput="saveData()"></div></td>
@@ -1328,32 +960,6 @@
             });
         }
 
-        function autoFixMissingButtons() {
-            document.querySelectorAll('.dept-card').forEach(card => {
-                const actionsBox = card.querySelector('.dept-actions');
-                if (actionsBox && !actionsBox.querySelector('.btn-add-subdept')) {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn btn-add-subdept';
-                    btn.onclick = function() { addSubDepartment(card.id); };
-                    btn.innerText = '+ قسم فرعي';
-                    
-                    const addPatientBtn = actionsBox.querySelector('.btn-add-patient');
-                    if (addPatientBtn) {
-                        actionsBox.insertBefore(btn, addPatientBtn);
-                    } else {
-                        actionsBox.appendChild(btn);
-                    }
-                }
-
-                if (!card.querySelector(`.sub-dept-container`)) {
-                    const subContainer = document.createElement('div');
-                    subContainer.className = 'sub-dept-container';
-                    subContainer.id = `sub-container-${card.id}`;
-                    card.appendChild(subContainer);
-                }
-            });
-        }
-
         function saveData() {
             if (!window.isEditMode) return;
             
@@ -1367,9 +973,7 @@
                     mainDay: document.getElementById('mainDaySelect').value,
                     mainDate: document.getElementById('mainDateInput').value,
                     htmlContent: document.getElementById('departmentsWrapper').innerHTML,
-                    tabsContent: document.getElementById('tabsContainer').innerHTML,
-                    dynamicCounter: dynamicDeptCounter,
-                    dynamicSubCounter: dynamicSubDeptCounter
+                    tabsContent: document.getElementById('tabsContainer').innerHTML
                 };
                 
                 localStorage.setItem('handoverDataMap_v2', JSON.stringify(data));
@@ -1394,10 +998,7 @@
 
             if(data.htmlContent) document.getElementById('departmentsWrapper').innerHTML = data.htmlContent;
             if(data.tabsContent) document.getElementById('tabsContainer').innerHTML = data.tabsContent;
-            if(data.dynamicCounter) dynamicDeptCounter = data.dynamicCounter;
-            if(data.dynamicSubCounter) dynamicSubDeptCounter = data.dynamicSubCounter;
 
-            autoFixMissingButtons();
             setEditMode(window.isEditMode);
         };
 
@@ -1417,16 +1018,14 @@
         }
 
         function clearData() {
-            if (confirm('هل أنت متأكد من مسح جميع البيانات المدخلة والبدء من جديد؟')) {
+            if (confirm('هل أنت متأكد من مسح جميع البيانات والبدء من جديد؟')) {
                 localStorage.removeItem('handoverDataMap_v2');
                 if(window.saveDataToFirebase) window.saveDataToFirebase({});
                 location.reload();
             }
         }
 
-        function generatePDF() {
-            window.print();
-        }
+        function generatePDF() { window.print(); }
 
         window.onload = loadData;
     </script>
