@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <style>
+    h1:first-of-type, body > a:first-of-type {
+        display: none !important;
+    }
+</style>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Patients-handover-map</title>
